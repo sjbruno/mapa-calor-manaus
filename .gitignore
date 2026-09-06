@@ -1,0 +1,23 @@
+# Ambiente virtual (criado pelo uv) — nunca vai pro git.
+# Quem clonar o projeto recria com `uv sync` a partir do pyproject.toml.
+.venv/
+__pycache__/
+*.pyc
+
+# Dados brutos: saem do Earth Engine, podem ser regerados rodando os scripts.
+# Não versionamos porque são grandes e reproduzíveis.
+data/raw/*
+!data/raw/.gitkeep
+
+# Dados processados: estes SÃO versionados (o site depende deles e são pequenos),
+# mas ignoramos os intermediários e gráficos de rascunho.
+data/processed/*.png
+data/processed/*.csv
+
+# Credenciais — se algum dia um arquivo de chave cair aqui, não vaza.
+*.json.key
+credentials.json
+.env
+
+# Lixo do macOS
+.DS_Store

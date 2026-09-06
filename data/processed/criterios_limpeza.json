@@ -1,0 +1,78 @@
+{
+  "_sobre": "Registro de todo critério de limpeza/correção aplicado aos dados de temperatura (LST) do bbox de Manaus, na ordem em que são aplicados no pipeline (scripts/05_montar_tabelas.py). Cada critério documenta o quê, o porquê, e quantos valores afetou. Gerado na Fase 5 (06/09/2026) e mantido atualizado a cada mudança no pipeline. Ver ESTUDO.md para a investigação completa de cada um.",
+  "criterios": [
+    {
+      "id": "faixa_plausivel",
+      "ordem": 1,
+      "aplicado_em": "05_montar_tabelas.py::aplicar_faixas_plausiveis",
+      "colunas_afetadas": ["lst_dia_c", "lst_noite_c", "ndvi"],
+      "criterio": "lst_dia_c e lst_noite_c fora de [10, 60] °C, ou ndvi fora de [-1, 1], viram nulo.",
+      "motivo": "Faixa fisicamente possível em qualquer lugar do planeta (não específica de Manaus) — qualquer valor fora dela é erro de processamento, não dado real.",
+      "constantes": { "LST_MIN_C": 10.0, "LST_MAX_C": 60.0, "NDVI_MIN": -1.0, "NDVI_MAX": 1.0 },
+      "linhas_afetadas": { "lst_dia_c": 58, "lst_noite_c": 30, "ndvi": 0 },
+      "status": "aplicado",
+      "referencia_estudo": "ESTUDO.md, Fase 5, seção 'Faixas plausíveis'"
+    },
+    {
+      "id": "inversao_termica",
+      "ordem": 2,
+      "aplicado_em": "05_montar_tabelas.py::filtrar_inversao_termica",
+      "colunas_afetadas": ["lst_dia_c"],
+      "criterio": "Na mesma célula/mês, se lst_noite_c > lst_dia_c + 5°C, lst_dia_c vira nulo (lst_noite_c não é tocado).",
+      "motivo": "Manaus é equatorial, sol forte o ano todo — noite mais quente que o dia por uma diferença grande não é clima, é resíduo de nuvem que passou pelo QC do produto MODIS. Confirmado nos dados: quando a inversão é grande (>5°C), é sempre lst_dia_c que sai da faixa normal da cidade; lst_noite_c continua normal.",
+      "constantes": { "LIMIAR_INVERSAO_NOITE_DIA_C": 5.0 },
+      "linhas_afetadas": { "lst_dia_c": 82 },
+      "status": "aplicado",
+      "referencia_estudo": "ESTUDO.md, Fase 5, adendo, item 2"
+    },
+    {
+      "id": "anomalia_climatologica",
+      "ordem": 3,
+      "aplicado_em": "05_montar_tabelas.py::filtrar_anomalias_climatologicas",
+      "colunas_afetadas": ["lst_dia_c", "lst_noite_c"],
+      "criterio": "Para cada célula e mês-calendário (ex.: 'toda célula X em todo junho', até 25 anos), calcula média e desvio-padrão histórico; valor a mais de 4 desvios-padrão vira nulo. Só aplicado se houver pelo menos 10 anos de histórico pra aquela célula-mês (senão o desvio-padrão é instável demais).",
+      "motivo": "Um valor pode estar dentro da faixa plausível global e não ser inversão térmica, e ainda assim ser implausível pra aquela célula específica. Caso real: ~30 células bateram 38-42°C em junho/2001 — parecia evento real de calor, mas junho/2001 teve recorde de FRIO documentado (pesquisa do usuário) e 0% de leitura noturna válida na grade inteira naquele mês. O 'pico quente' era artefato de poucos pixels de dia sobrando, não sinal real.",
+      "constantes": { "LIMIAR_Z_CLIMATOLOGICO": 4.0, "min_anos_historico": 10 },
+      "linhas_afetadas": { "lst_dia_c": 430, "lst_noite_c": 6 },
+      "status": "aplicado",
+      "referencia_estudo": "ESTUDO.md, Fase 5, adendo, item 3",
+      "licao_aprendida": "Um padrão que 'parece' consistente com uma explicação plausível não é prova — verificar contra fonte externa antes de decidir manter um dado suspeito como sinal real."
+    },
+    {
+      "id": "deriva_orbital_terra",
+      "ordem": 4,
+      "aplicado_em": "08_corrigir_deriva_orbital.py",
+      "colunas_afetadas": ["lst_dia_c_corrigido", "lst_noite_c_corrigido"],
+      "criterio": "Colunas NOVAS, lado a lado com lst_dia_c/lst_noite_c (que continuam intocadas). lst_dia_c_corrigido = lst_dia_c + k * (temp_ar(hora_referência) - temp_ar(hora_observada_no_mês)); mesma fórmula pra lst_noite_c_corrigido, com a hora de referência noturna.",
+      "motivo": "O satélite Terra vem passando cada vez mais cedo sobre Manaus desde 2020 (confirmado com a banda Day_view_time do próprio MOD11A2: hora média de passagem diurna estável em ~10,47h entre 2001-2020, caindo pra 9,31h em 2025 — bate com a deriva documentada pela NASA). Passagem mais cedo mede a superfície antes dela esquentar -> viés de frio crescente nos anos recentes, sem ser evento climático real.",
+      "status": "aplicado",
+      "metodologia": {
+        "resumo": "Não dá pra estimar 'quantos °C por hora' só com os dados de LST (variação natural da hora de passagem em 2001-2020 é de só ~7 min, pequena demais pra estimar com confiança — regressão deu coeficiente não significativo, IC 95% incluindo zero). Em vez disso: usa a curva horária REAL de temperatura do ar em Manaus (Open-Meteo, 2001-2020, mesma fonte da Fase 1) pra pegar a FORMA certa do aquecimento matinal (a subida das 9h pras 10h é bem mais íngreme que das 14h pras 15h), e calibra a AMPLITUDE com os dois horários que a própria LST já tem (dia ~10h28, noite ~22h31, na média 2001-2020) — a diferença entre LST dia e LST noite, dividida pela diferença de temperatura do ar nesses dois mesmos horários, dá um fator de amplificação superfície/ar específico de Manaus (k).",
+        "constantes_calibradas": {
+          "k_amplificacao_superficie_ar": 2.3445,
+          "hora_dia_referencia": 10.467,
+          "hora_noite_referencia": 22.525,
+          "ano_fim_periodo_referencia": 2020
+        },
+        "fontes_de_dado": [
+          "data/processed/hora_passagem_mensal.parquet (banda Day_view_time/Night_view_time do MOD11A2, via 06_deriva_orbital.py)",
+          "data/processed/curva_horaria_ar.parquet (Open-Meteo Archive API, hourly temperature_2m, 2001-2020, via 07_curva_horaria_ar.py)"
+        ],
+        "limitacoes": [
+          "Corrige com a hora de passagem média do bbox inteiro por mês, não por célula — assume que a deriva orbital afeta todas as células do mesmo jeito no mesmo mês (razoável: é o mesmo satélite passando sobre uma área pequena em poucos minutos).",
+          "k é um único fator global (mesmo valor pra corrigir a subida da manhã e o resfriamento da noite) porque só temos dois horários-âncora de LST (dia e noite) pra calibrar — não dá pra medir se a amplificação superfície/ar muda ao longo do dia.",
+          "Usa temperatura do AR (2 m) pra achar a forma da curva, não temperatura de SUPERFÍCIE (LST) diretamente — LST não tem dado por hora disponível pra calibrar a forma sozinha; por isso o k existe, pra converter a escala."
+        ],
+        "resultado_2025": "Correção média de +2,26°C em lst_dia_c (o ano mais afetado pela deriva). Efeito: a média anual de lst_dia_c em 2025 sai de -2,90 desvios-padrão (outlier extremo) para +1,37 desvios-padrão (dentro do normal) em relação aos outros 24 anos."
+      },
+      "ui_requisito": "Fase 6: gráfico/mapa deve usar lst_dia_c_corrigido/lst_noite_c_corrigido por padrão, com uma opção visível pra desligar a correção e voltar ao dado bruto (lst_dia_c/lst_noite_c) — a correção vem LIGADA por padrão. Explicação em linguagem simples precisa acompanhar o toggle (ver 'explicacao_usuario').",
+      "explicacao_usuario": "Perto do fim da missão (2020 em diante), o satélite Terra passa sobre Manaus cada vez mais cedo de manhã — o que faz a superfície aparecer artificialmente mais fria nos dados brutos dos últimos anos, sem que a cidade tenha realmente esfriado. Corrigimos isso projetando cada medição pro horário em que o satélite historicamente passava (confirmamos a mudança de horário com dado do próprio satélite, e calibramos o tamanho da correção com a curva real de temperatura por hora em Manaus). Você pode desligar essa correção e ver o dado bruto do satélite a qualquer momento.",
+      "referencia_estudo": "ESTUDO.md, Fase 5b",
+      "referencia_evento": "data/processed/eventos_anomalias.json::deriva_orbital_terra_2025",
+      "dado_de_apoio": [
+        "data/processed/hora_passagem_mensal.parquet",
+        "data/processed/curva_horaria_ar.parquet"
+      ]
+    }
+  ]
+}

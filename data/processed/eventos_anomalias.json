@@ -1,0 +1,140 @@
+{
+  "_sobre": "Catálogo de eventos climáticos/técnicos reais usados para explicar anomalias e outliers nos dados de temperatura (LST) e nível de água do bbox de Manaus. Gerado na Fase 5 (double-check de anomalias, 06/09/2026). Cada evento tem um período (ano/mês), o efeito esperado nos dados, e as fontes usadas para confirmar. Pensado para a Fase 6 citar como referência ao lado de anomalias no gráfico/mapa.",
+  "eventos": [
+    {
+      "id": "friagem_2001_06",
+      "periodo": { "ano_inicio": 2001, "mes_inicio": 6, "ano_fim": 2001, "mes_fim": 6 },
+      "tipo": "friagem",
+      "titulo": "Friagem de junho/2001",
+      "resumo": "Incursão de massa de ar frio (friagem) causou recorde de frio em Manaus. O mês teve 0% de leitura noturna válida de LST em toda a grade (nenhum outro junho em 25 anos chega perto) e completude diurna caiu para 86,7% — consistente com céu encoberto por período prolongado.",
+      "efeito_nos_dados": "lst_dia_c com pico espúrio de até 42,01°C em ~30 células vizinhas (poucos pixels de dia sobrando num mês excepcionalmente nublado); filtrado em 05_montar_tabelas.py (filtrar_anomalias_climatologicas).",
+      "verificado_por": "usuario",
+      "nota_verificacao": "O recorde de frio em junho/2001 foi levantado pelo próprio usuário (Bruno) em pesquisa própria, fora deste pipeline. Não encontrei uma fonte com URL que documente especificamente essa data ao pesquisar — só contexto geral de que friagens são recorrentes na região. Não citar como 'fonte verificada' até ter um link concreto.",
+      "fontes": [
+        {
+          "titulo": "As incursões de ar frio no Estado do Amazonas (dissertação, UFAM)",
+          "url": "https://tede.ufam.edu.br/bitstream/tede/2807/4/IVAN%20LINHARES%20RIBEIRO.pdf",
+          "observacao": "Contexto geral sobre friagens no Amazonas, não confirma a data específica de junho/2001."
+        }
+      ]
+    },
+    {
+      "id": "cheia_2009",
+      "periodo": { "ano_inicio": 2009, "mes_inicio": 1, "ano_fim": 2009, "mes_fim": 12 },
+      "tipo": "cheia",
+      "titulo": "Cheia histórica do Rio Negro — 2009",
+      "resumo": "Uma das maiores cheias já registradas em Manaus (16,04 m). Chuva/nuvem persistente o ano inteiro.",
+      "efeito_nos_dados": "2009 é um dos anos com menor completude de dado da série inteira (lst_dia_c: 88,9%; lst_noite_c: 27,5%; ndvi: 69,3%) — nuvem extrema reduzindo pixels válidos do MODIS, não falha de processamento.",
+      "verificado_por": "pesquisa",
+      "fontes": [
+        {
+          "titulo": "Rio Negro registra a maior cheia em 119 anos em Manaus — CNN Brasil",
+          "url": "https://www.cnnbrasil.com.br/nacional/rio-negro-registra-a-maior-cheia-em-119-anos-em-manaus/"
+        },
+        {
+          "titulo": "Cheia do Rio Negro: Confira as 10 marcas recordes já registradas, desde 1902 — Portal Amazônia",
+          "url": "https://portalamazonia.com/amazonas/cheia-do-rio-negro-confira-as-10-marcas-recordes-ja-registradas-desde-1902/"
+        }
+      ]
+    },
+    {
+      "id": "cheia_2012",
+      "periodo": { "ano_inicio": 2012, "mes_inicio": 1, "ano_fim": 2012, "mes_fim": 12 },
+      "tipo": "cheia",
+      "titulo": "Cheia histórica do Rio Negro — 2012",
+      "resumo": "Recorde histórico da época (29,97 m), só superado em 2021. Ano de chuva/nuvem extrema.",
+      "efeito_nos_dados": "Completude reduzida de lst_noite_c em vários meses de 2012 (ex.: setembro/2012 é o pior setembro da série, z=-2,18 vs. outros anos).",
+      "verificado_por": "pesquisa",
+      "fontes": [
+        {
+          "titulo": "Cheia do Rio Negro: Confira as 10 marcas recordes já registradas, desde 1902 — Portal Amazônia",
+          "url": "https://portalamazonia.com/amazonas/cheia-do-rio-negro-confira-as-10-marcas-recordes-ja-registradas-desde-1902/"
+        },
+        {
+          "titulo": "Maior cheia da história do Rio Negro alaga cidades e afeta mais de 455 mil pessoas — WWF Brasil",
+          "url": "https://www.wwf.org.br/?78988%2FMaior-cheia-da-historia-do-Rio-Negro-alaga-cidades-e-afeta-mais-de-455-mil-pessoas="
+        }
+      ]
+    },
+    {
+      "id": "seca_2005",
+      "periodo": { "ano_inicio": 2005, "mes_inicio": 1, "ano_fim": 2005, "mes_fim": 12 },
+      "tipo": "seca",
+      "titulo": "Seca histórica da Amazônia — 2005",
+      "resumo": "Uma das primeiras secas severas do século na Amazônia; Rio Negro chegou a 14,75 m em Manaus, patamar considerado de seca severa. Associada a aquecimento anômalo do Atlântico tropical norte (não um El Niño clássico).",
+      "efeito_nos_dados": "2005 aparece entre os anos mais quentes da série em lst_dia_c (z=+0,24) e com completude reduzida em alguns meses (ex.: dezembro/2005 com 0% de leitura noturna).",
+      "verificado_por": "pesquisa",
+      "fontes": [
+        {
+          "titulo": "Histórico de Secas na Amazônia (ResearchGate)",
+          "url": "https://www.researchgate.net/publication/322131862_Historico_de_Secas_na_Amazonia"
+        }
+      ]
+    },
+    {
+      "id": "el_nino_2023_2024",
+      "periodo": { "ano_inicio": 2023, "mes_inicio": 6, "ano_fim": 2024, "mes_fim": 12 },
+      "tipo": "seca",
+      "titulo": "El Niño 2023-2024 — pior seca em 122 anos na Amazônia",
+      "resumo": "El Niño forte a partir de julho/2023, somado a aquecimento anômalo do Atlântico Norte (+1,2 a 1,4°C), reduziu drasticamente as chuvas. Rio Negro em Manaus: 13,59 m em outubro/2023 (recorde histórico até então) e 12,66 m em outubro/2024 (menor nível em 122 anos de medição, desde 1902).",
+      "efeito_nos_dados": "2023 e 2024 estão entre os anos mais quentes da série em lst_dia_c (z=+1,49 e +1,29) — sinal real de seca/calor, consistente com o objetivo do projeto (calor de superfície ligado a estresse hídrico/perda de vegetação).",
+      "verificado_por": "pesquisa",
+      "fontes": [
+        {
+          "titulo": "Seca extrema: Rio Negro atinge seu menor nível em 122 anos — ClimaInfo",
+          "url": "https://climainfo.org.br/2024/10/07/seca-extrema-rio-negro-atinge-seu-menor-nivel-em-122-anos/"
+        },
+        {
+          "titulo": "Principais rios da bacia do Amazonas têm menor nível da história em 2024 — InfoAmazonia",
+          "url": "https://infoamazonia.org/2024/11/14/seis-principais-rios-da-bacia-do-amazonas-tem-menor-nivel-da-historia-em-2024/"
+        },
+        {
+          "titulo": "Seca histórica: rios da Amazônia atingem mínimas recorde — Greenpeace Brasil",
+          "url": "https://www.greenpeace.org/brasil/blog/seca-historica-rios-da-amazonia-atingem-minimas-recorde/"
+        },
+        {
+          "titulo": "Alerta: Bacia do Rio Amazonas registra novas mínimas históricas — Climatempo",
+          "url": "https://www.climatempo.com.br/noticia/2023/10/20/alerta-bacia-do-rio-amazonas-registra-novas-minimas-historicas-2634"
+        }
+      ]
+    },
+    {
+      "id": "la_nina_2024_2025",
+      "periodo": { "ano_inicio": 2024, "mes_inicio": 12, "ano_fim": 2025, "mes_fim": 4 },
+      "tipo": "la_nina",
+      "titulo": "La Niña 2024-2025 (fraca e curta)",
+      "resumo": "WMO/NOAA confirmaram La Niña fraca entre dez/2024 e fev/2025, com retorno a condições neutras esperado entre fev-abr/2025.",
+      "efeito_nos_dados": "Hipótese avaliada (e considerada insuficiente sozinha) para explicar o resfriamento de lst_dia_c em 2025: a magnitude e o padrão temporal do resfriamento observado (pior em set-nov/2025, depois do fim previsto da La Niña) não batem bem com este evento isolado — ver 'deriva_orbital_terra_2025'.",
+      "verificado_por": "pesquisa",
+      "fontes": [
+        {
+          "titulo": "La Niña 2024/2025: Fraca e de curta duração, segundo a WMO — Climatempo",
+          "url": "https://www.climatempo.com.br/noticia/la-nina/la-nina-2024-2025-fraca-e-de-curta-duracao-segundo-a-wmo"
+        },
+        {
+          "titulo": "Saiba como será o La Niña 2024/2025 — Conexão Safra",
+          "url": "https://conexaosafra.com/previsao-tempo/saiba-como-sera-o-la-nina-2024-2025/"
+        }
+      ]
+    },
+    {
+      "id": "deriva_orbital_terra_2025",
+      "periodo": { "ano_inicio": 2020, "mes_inicio": 1, "ano_fim": 2026, "mes_fim": 12 },
+      "tipo": "artefato_sensor",
+      "titulo": "Deriva orbital do satélite Terra (viés de frio crescente, não corrigido)",
+      "resumo": "Após uma manobra final em 2020, o horário de passagem do Terra sobre o equador (nominal 10h30) vem migrando pra mais cedo: ~9h00 até dezembro/2025, indo a 8h30 até o fim de 2026 (fim da missão). Passagem mais cedo fotografa a superfície antes dela esquentar no meio do dia -> viés de LST diurna mais fria, crescente com o tempo.",
+      "efeito_nos_dados": "Hipótese líder (ainda não confirmada com dado direto do próprio satélite) para o resfriamento sistemático de lst_dia_c em 2025 (-2,90 desvios-padrão vs. os outros 24 anos, com completude de dado excelente — descarta nuvem como causa). Precisa confirmar com a banda Day_view_time do MOD11A2 antes de decidir qualquer correção.",
+      "verificado_por": "pesquisa",
+      "fontes": [
+        {
+          "titulo": "Terra Orbital Drift Information — NASA",
+          "url": "https://terra.nasa.gov/about/terras-orbit-changes/terra-orbital-drift-information"
+        },
+        {
+          "titulo": "Terra's New Orbit — NASA",
+          "url": "https://terra.nasa.gov/about/terras-orbit-changes"
+        }
+      ]
+    }
+  ]
+}

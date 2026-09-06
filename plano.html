@@ -1,0 +1,1092 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa Amazônia — Plano de Execução</title>
+<style>
+  :root {
+    --bg: #faf9f5;
+    --surface: #ffffff;
+    --surface-2: #f4f3ed;
+    --ink: #1a1c18;
+    --muted: #61675d;
+    --faint: #8b9086;
+    --line: #e3e1d7;
+    --line-strong: #cfccbf;
+    --green: #1f6f4a;
+    --green-soft: #e7f1eb;
+    --heat: #b8430f;
+    --heat-soft: #fbeae0;
+    --warn: #8a6410;
+    --warn-soft: #fbf2dc;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111310;
+      --surface: #1a1d18;
+      --surface-2: #212520;
+      --ink: #e9eae4;
+      --muted: #a0a69b;
+      --faint: #7d8378;
+      --line: #2b302a;
+      --line-strong: #3c423a;
+      --green: #63c193;
+      --green-soft: #16281f;
+      --heat: #f0925c;
+      --heat-soft: #2e1c12;
+      --warn: #d9b25e;
+      --warn-soft: #2b2313;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111310;
+    --surface: #1a1d18;
+    --surface-2: #212520;
+    --ink: #e9eae4;
+    --muted: #a0a69b;
+    --faint: #7d8378;
+    --line: #2b302a;
+    --line-strong: #3c423a;
+    --green: #63c193;
+    --green-soft: #16281f;
+    --heat: #f0925c;
+    --heat-soft: #2e1c12;
+    --warn: #d9b25e;
+    --warn-soft: #2b2313;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a { color: var(--green); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--green) 35%, transparent); }
+  a:hover { border-bottom-color: var(--green); }
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+  }
+  pre {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.65;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    overflow-x: auto;
+    margin: 0.85rem 0;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: 1em; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 1.25rem 6rem; }
+
+  /* ---------- Barra fixa de topo ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    max-width: 860px; margin: 0 auto; padding: 0.65rem 1.25rem;
+    display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;
+  }
+  .topbar-title { font-weight: 600; font-size: 0.9rem; letter-spacing: -0.01em; margin-right: auto; }
+  .topbar-title span { color: var(--muted); font-weight: 400; }
+  .bar {
+    flex: 1 1 140px; min-width: 110px; height: 6px;
+    background: var(--line); border-radius: 99px; overflow: hidden;
+  }
+  .bar > i { display: block; height: 100%; width: 0%; background: var(--green); border-radius: 99px; transition: width .3s ease; }
+  .pct { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  button {
+    font-family: inherit; font-size: 0.78rem; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--line-strong);
+    border-radius: 7px; padding: 0.32rem 0.6rem; cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  button:hover { background: var(--surface-2); border-color: var(--muted); }
+  button.primary { background: var(--green); color: #fff; border-color: var(--green); }
+  :root[data-theme="dark"] button.primary, :root:not([data-theme="light"]) button.primary { color: #0d1710; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) button.primary { color: #fff; } }
+  button.primary:hover { filter: brightness(1.08); background: var(--green); }
+
+  /* ---------- Cabeçalho ---------- */
+  header.hero { padding: 3rem 0 1.75rem; }
+  .kicker {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--heat); margin-bottom: 0.9rem;
+  }
+  h1 { font-size: clamp(1.85rem, 5vw, 2.6rem); line-height: 1.12; margin: 0 0 0.9rem; letter-spacing: -0.025em; font-weight: 650; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 60ch; margin: 0; }
+
+  /* ---------- Persistência ---------- */
+  .persist {
+    margin: 1.75rem 0 0; padding: 0.9rem 1rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;
+    font-size: 0.83rem;
+  }
+  .persist .status { color: var(--muted); margin-right: auto; display: flex; align-items: center; gap: 0.45rem; }
+  .dot { width: 7px; height: 7px; border-radius: 99px; background: var(--faint); flex: none; }
+  .dot.on { background: var(--green); }
+  .dot.warn { background: var(--warn); }
+
+  /* ---------- Seções de texto ---------- */
+  section.doc { margin: 2.5rem 0; }
+  h2 {
+    font-size: 1.28rem; letter-spacing: -0.015em; margin: 0 0 0.35rem; font-weight: 620;
+  }
+  h3 { font-size: 0.95rem; margin: 1.5rem 0 0.5rem; font-weight: 600; }
+  .doc p { margin: 0.8rem 0; }
+  .doc > p:first-of-type { margin-top: 0.6rem; }
+  .rule { height: 1px; background: var(--line); border: 0; margin: 3rem 0; }
+
+  .callout {
+    border-left: 3px solid var(--heat); background: var(--heat-soft);
+    padding: 0.85rem 1rem; border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 1.1rem 0; font-size: 0.92rem;
+  }
+  .callout.green { border-left-color: var(--green); background: var(--green-soft); }
+  .callout.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+  .callout strong { font-weight: 620; }
+  .callout p { margin: 0.5rem 0; }
+  .callout p:first-child { margin-top: 0; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .facts { display: grid; gap: 0.5rem; margin: 1.2rem 0; }
+  .fact {
+    display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.9rem;
+    padding: 0.6rem 0; border-top: 1px solid var(--line); font-size: 0.9rem;
+  }
+  .fact dt { color: var(--muted); font-size: 0.82rem; padding-top: 0.1rem; }
+  .fact dd { margin: 0; }
+  @media (max-width: 560px) { .fact { grid-template-columns: 1fr; gap: 0.15rem; } }
+
+  /* ---------- Fases ---------- */
+  .phase {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); margin: 0.7rem 0; overflow: hidden;
+  }
+  .phase.done { border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
+  .phase-head {
+    display: flex; align-items: center; gap: 0.85rem; width: 100%;
+    padding: 0.95rem 1.05rem; background: none; border: 0; border-radius: 0;
+    text-align: left; cursor: pointer; font-size: 1rem;
+  }
+  .phase-head:hover { background: var(--surface-2); border-color: transparent; }
+  .phase-num {
+    font-family: var(--mono); font-size: 0.72rem; color: var(--muted);
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 6px; padding: 0.2rem 0.42rem; flex: none;
+  }
+  .phase.done .phase-num { background: var(--green); color: #fff; border-color: var(--green); }
+  :root[data-theme="dark"] .phase.done .phase-num { color: #0d1710; }
+  .phase-title { font-weight: 600; letter-spacing: -0.01em; flex: 1 1 auto; }
+  .phase-title em { display: block; font-style: normal; font-weight: 400; font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; }
+  .phase-meta { font-family: var(--mono); font-size: 0.73rem; color: var(--muted); flex: none; font-variant-numeric: tabular-nums; }
+  .chev { flex: none; color: var(--faint); transition: transform .2s; font-size: 0.7rem; }
+  .phase.open .chev { transform: rotate(90deg); }
+  .phase-body { display: none; padding: 0 1.05rem 1.2rem; border-top: 1px solid var(--line); }
+  .phase.open .phase-body { display: block; }
+  .objetivo { font-size: 0.94rem; color: var(--muted); margin: 0.95rem 0 0; padding-left: 0.8rem; border-left: 2px solid var(--line-strong); }
+
+  .bloco-titulo {
+    font-size: 0.71rem; font-family: var(--mono); text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--faint); margin: 1.5rem 0 0.6rem;
+  }
+
+  ul.itens { list-style: none; margin: 0; padding: 0; }
+  ul.itens li {
+    display: flex; gap: 0.7rem; align-items: flex-start;
+    padding: 0.5rem 0; border-top: 1px solid var(--line);
+  }
+  ul.itens li:first-child { border-top: 0; }
+  ul.itens input[type=checkbox] {
+    appearance: none; -webkit-appearance: none;
+    width: 17px; height: 17px; margin: 0.2rem 0 0; flex: none; cursor: pointer;
+    border: 1.5px solid var(--line-strong); border-radius: 5px; background: var(--surface);
+    transition: background .12s, border-color .12s;
+  }
+  ul.itens input[type=checkbox]:hover { border-color: var(--green); }
+  ul.itens input[type=checkbox]:checked {
+    background: var(--green); border-color: var(--green);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-6'/></svg>");
+    background-size: 15px 15px; background-position: center; background-repeat: no-repeat;
+  }
+  .item-txt { flex: 1 1 auto; font-size: 0.93rem; }
+  li.checked .item-txt > .t { color: var(--faint); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+  .item-txt .porque { display: block; font-size: 0.82rem; color: var(--muted); margin-top: 0.15rem; }
+  .item-txt .porque a { font-size: inherit; }
+
+  .pronto {
+    margin-top: 1.4rem; padding: 0.75rem 0.9rem;
+    background: var(--green-soft); border-radius: var(--radius);
+    font-size: 0.88rem;
+  }
+  .pronto b { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green); display: block; margin-bottom: 0.25rem; }
+
+  .phase-bar { height: 3px; background: var(--line); }
+  .phase-bar > i { display: block; height: 100%; width: 0; background: var(--green); transition: width .3s ease; }
+
+  .controls { display: flex; gap: 0.5rem; margin: 1.5rem 0 0.5rem; flex-wrap: wrap; }
+
+  footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: 0.82rem; color: var(--faint); }
+
+  .toast {
+    position: fixed; bottom: 1.25rem; left: 50%; transform: translate(-50%, 1.5rem);
+    background: var(--ink); color: var(--bg); padding: 0.55rem 1rem;
+    border-radius: 99px; font-size: 0.82rem; opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s; z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media print {
+    .topbar, .persist, .controls, .toast { display: none !important; }
+    .phase-body { display: block !important; }
+    .phase { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-title">Mapa Amazônia <span>· plano de execução</span></div>
+    <div class="bar"><i id="bar-global"></i></div>
+    <div class="pct" id="pct-global">0/0</div>
+    <button id="btn-tema" title="Alternar tema">◐</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">Manaus · 2001–2025 · MODIS</div>
+    <h1>Temperatura histórica × áreas verdes</h1>
+    <p class="lede">
+      Plano de implementação completo, fatiado em fases pequenas. Cada fase diz o que
+      estudar antes, o que construir, e como saber que ficou pronto. Marque conforme
+      avança — o progresso fica salvo.
+    </p>
+
+    <div class="persist">
+      <div class="status"><span class="dot" id="dot"></span><span id="status-txt">carregando…</span></div>
+      <button id="btn-conectar" class="primary">Conectar progresso.json</button>
+      <button id="btn-exportar">Exportar</button>
+      <button id="btn-importar">Importar</button>
+      <input type="file" id="file-input" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <section class="doc">
+    <h2>Contexto</h2>
+    <p>
+      O <code>CLAUDE.md</code> do projeto é um brief de pesquisa: define o propósito —
+      visualizar como a perda de vegetação urbana se relaciona com o aumento de
+      temperatura em Manaus ao longo do tempo e do espaço — lista fontes candidatas e
+      deixa cinco perguntas em aberto. Este plano fecha essas perguntas e transforma o
+      brief numa sequência executável.
+    </p>
+    <p>Duas restrições moldam tudo o que vem abaixo.</p>
+
+    <div class="callout green">
+      <p><strong>1. Você é iniciante em Python</strong> e quer executar as tarefas
+      manualmente, aprendendo no caminho. Por isso o projeto está fatiado em fases
+      pequenas, cada uma com um bloco explícito de "o que estudar antes". Nenhuma fase
+      pressupõe conhecimento que uma fase anterior não tenha coberto.</p>
+    </div>
+
+    <div class="callout">
+      <p><strong>2. A missão MODIS acabou.</strong> Terra e Aqua foram desativados: a
+      coleção <code>MODIS/061/MOD11A2</code> vai até <strong>13/08/2026</strong> e
+      <code>MODIS/061/MOD13Q1</code> até <strong>28/07/2026</strong>.</p>
+      <p>Isso <em>não</em> é um problema aqui — significa que o arquivo 2001–2025 é uma
+      série histórica <strong>completa, estável e que nunca mais muda</strong>. É o
+      dataset ideal para um projeto histórico. O custo é que o site não se auto-atualiza;
+      continuidade futura exigiria VIIRS (2012+) ou Landsat, numa v2.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="doc">
+    <h2>Decisões de arquitetura</h2>
+
+    <h3>O processamento pesado não roda na sua máquina</h3>
+    <p>
+      Este é o ponto que simplifica tudo. O Earth Engine processa raster
+      <strong>nos servidores do Google</strong>. Seu script não baixa imagem de satélite:
+      ele <em>descreve</em> um cálculo, manda a descrição, e recebe de volta uma tabela
+      pequena de números já agregados.
+    </p>
+    <p>
+      Consequência prática: você <strong>não</strong> precisa instalar
+      <code>rasterio</code>, <code>gdal</code> ou <code>geopandas</code> no começo — que é
+      justamente onde iniciantes em geoprocessamento perdem três dias com erro de
+      compilação. As dependências iniciais são <code>earthengine-api</code>,
+      <code>pandas</code> e <code>requests</code>.
+    </p>
+
+    <h3>As cinco perguntas em aberto, fechadas</h3>
+    <dl class="facts">
+      <div class="fact"><dt>Fonte de dados</dt><dd>MODIS puro. <code>MOD11A2</code> para temperatura de superfície, <code>MOD13Q1</code> para NDVI. Landsat e VIIRS ficam fora da v1.</dd></div>
+      <div class="fact"><dt>Tamanho da célula</dt><dd><strong>1 km</strong> — resolução nativa da temperatura. O NDVI de 250 m é agregado <em>para cima</em>. Com uma grade só, cruzar as camadas vira um <code>join</code> por <code>cell_id</code>, que você consegue depurar sendo iniciante. Fazer a temperatura "virar" 250 m não criaria informação, só a ilusão de detalhe.</dd></div>
+      <div class="fact"><dt>Período</dt><dd><strong>2001–2025</strong>, 25 anos civis completos. 2000 é parcial (MODIS começa em 18/02) e estragaria comparações anuais; 2026 também.</dd></div>
+      <div class="fact"><dt>Recorte espacial</dt><dd>Bounding box <code>[-60.20, -3.20, -59.75, -2.85]</code> — cerca de 50 × 39 km, ~1.950 células. Cobre a mancha urbana, o Rio Negro e a Reserva Ducke. Incluir floresta é proposital: o contraste cidade/mata é o que dá força ao mapa. O município inteiro (11.400 km²) seria quase todo mata irrelevante à pergunta.</dd></div>
+      <div class="fact"><dt>Armazenamento</dt><dd>Arquivos estáticos, sem banco. Um Parquet por ano (~23 mil linhas cada) mais um <code>grade.geojson</code> carregado uma vez. Hospedagem gratuita em GitHub ou Cloudflare Pages.</dd></div>
+      <div class="fact"><dt>Front-end</dt><dd>MapLibre GL JS. Leaflet é mais fácil, mas repintar 1.950 polígonos em SVG a cada movimento do slider trava; MapLibre usa GPU. Como essa parte <strong>eu escrevo</strong>, o custo de aprendizado não recai sobre você.</dd></div>
+    </dl>
+
+    <h3>O slider cobre 1940–2025, mas a granularidade do mapa muda em 2001</h3>
+    <p><em>Decisão adicional, fechada em 05/09/2026.</em></p>
+    <p>
+      A série da Open-Meteo (Fase 1) vai de 1940 até hoje, mas é <strong>um
+      ponto só</strong> — a reanálise ERA5 tem resolução nativa de ~31&nbsp;km
+      (ou ~9&nbsp;km na variante ERA5-Land), muito mais grosseira que o
+      bbox inteiro de Manaus (~50×39&nbsp;km). Pedir vários pontos dentro da
+      cidade nessa fonte devolveria basicamente o mesmo número repetido —
+      criaria a <strong>ilusão</strong> de detalhe espacial que o dado não
+      sustenta. Motivo mais fundamental: nenhum satélite com sensor térmico
+      existia antes de 1984 (Landsat 4) — antes disso, não existe fonte
+      nenhuma de temperatura de superfície com qualquer resolução espacial.
+    </p>
+    <p>
+      Por isso o mapa não finge granularidade uniforme no tempo todo:
+    </p>
+    <ul>
+      <li><strong>1940–2000:</strong> o bbox inteiro pintado de <strong>uma cor só</strong>,
+        que muda de tom conforme o slider anda — o dado da Open-Meteo (Fase 1),
+        sem subdivisão em células.</li>
+      <li><strong>2001–2025:</strong> a grade completa de ~1.950 células de 1&nbsp;km,
+        com temperatura de superfície (MODIS) e vegetação (NDVI) sobrepostas —
+        o produto principal do projeto.</li>
+    </ul>
+    <p>
+      A transição em 2001 no mapa é honesta com a granularidade real de cada
+      fonte, em vez de esconder a diferença atrás de uma interpolação
+      bonita mas sem embasamento.
+    </p>
+
+    <h3>Estrutura de pastas</h3>
+    <p><em>Atualizada em 05/09/2026 — <code>config.py</code> virou um pacote instalável (ver ESTUDO.md, adendo à Fase 0), para eliminar hacks de import entre scripts.</em></p>
+<pre><code>mapa-amazonia/
+├── CLAUDE.md
+├── ESTUDO.md              # material de estudo, atualizado a cada bloco
+├── pyproject.toml         # dependências + build system do pacote
+├── .gitignore
+├── plano.html             # este arquivo
+├── src/
+│   └── mapa_amazonia/
+│       ├── __init__.py
+│       └── config.py      # bbox, anos, IDs das coleções — um lugar só
+├── scripts/
+│   ├── 01_temperatura_ar.py
+│   ├── 02_ee_primeiro_teste.py
+│   ├── 03_lst_mensal.py
+│   ├── 04_ndvi_mensal.py
+│   └── 05_montar_tabelas.py
+├── data/
+│   ├── raw/              # saída crua do Earth Engine
+│   └── processed/        # o que o site consome
+└── site/                 # front-end</code></pre>
+  </section>
+
+  <hr class="rule">
+
+  <section class="doc">
+    <h2>Como vamos trabalhar</h2>
+    <p><em>Atualizado em 05/09/2026 — modo de trabalho trocado a pedido do Bruno.</em></p>
+    <p>Cada fase segue o mesmo ciclo:</p>
+    <ol>
+      <li><strong>Eu implemento o bloco.</strong> Código real, funcionando — não esqueleto com <code>#&nbsp;TODO</code>. Um pedaço pequeno por vez, não a fase inteira de uma vez.</li>
+      <li><strong>Eu rodo e confiro.</strong> Se quebrar, eu leio o traceback e conserto antes de seguir.</li>
+      <li><strong>Eu atualizo o <code>ESTUDO.md</code> em paralelo.</strong> O que foi construído, por que essa decisão e não outra, o que cada trecho faz, e o que dá pra aprender ali — escrito para ser lido depois, sem precisar ter acompanhado a execução.</li>
+      <li><strong>Critério de pronto explícito.</strong> Um número que bate, um arquivo que existe, um gráfico que aparece.</li>
+      <li><strong>Aviso quando a etapa exige ação sua.</strong> Ex.: criar conta no Google Earth Engine na Fase 2 — isso é externo e exige suas próprias credenciais, ninguém mais pode fazer por você.</li>
+    </ol>
+    <div class="callout green">
+      <p><strong>Regra:</strong> o Bruno não escreve código neste projeto. O aprendizado
+      acontece lendo o <code>ESTUDO.md</code> depois de cada bloco, não escrevendo os
+      TODOs. Front-end continua sendo escrito por mim, como já era.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="doc">
+    <h2>As fases</h2>
+    <p class="lede" style="font-size:0.92rem; margin-bottom:0.5rem;">
+      Clique numa fase para abrir. Marque os itens conforme completa.
+    </p>
+    <div class="controls">
+      <button id="btn-abrir">Abrir todas</button>
+      <button id="btn-fechar">Fechar todas</button>
+      <button id="btn-limpar">Zerar progresso</button>
+    </div>
+    <div id="fases"></div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="doc">
+    <h2>Fora do escopo desta v1</h2>
+    <p>Explicitamente adiado, para não inflar o primeiro entregável:</p>
+    <dl class="facts">
+      <div class="fact"><dt>Infraestrutura urbana</dt><dd>Fase 2 do brief — MapBiomas "área urbanizada" anual e histórico do OpenStreetMap. Entra depois que o eixo temperatura × vegetação estiver no ar.</dd></div>
+      <div class="fact"><dt>Notícias / GDELT</dt><dd>Fase 3 do brief. A ressalva do brief está correta: geocodificação a nível de cidade não resolve, precisaria de NLP e scraping de veículos locais. É um projeto próprio.</dd></div>
+      <div class="fact"><dt>Landsat 30 m</dt><dd>
+        E a série 1984–2000. Ganho de resolução não compensa o trabalho de
+        máscara de nuvem na v1. <strong>Confirmado como tecnicamente
+        possível</strong> (05/09/2026): Landsat 4/5 TM (banda térmica, LST
+        já calibrada na Collection 2 Level 2) cobre 1984+, gratuito via
+        Earth Engine. As mesmas bandas óptico/infravermelho-próximo também
+        permitem calcular <strong>NDVI</strong> desde 1984 — ou seja, dá pra
+        ter temperatura <em>e</em> vegetação nessa janela, não só
+        temperatura, se a v2 acontecer. Ressalva que se aplica às duas
+        camadas igualmente: revisita de 16 dias (vs. 1-2 do MODIS) + nuvem
+        constante na Amazônia = meses/áreas sem nenhuma medição válida,
+        mais frequentes que na v1. Isso não é a nuvem "tapando a foto" — é o
+        algoritmo de geração do produto se recusando a calcular um valor
+        de superfície quando detecta nuvem no pixel (explicação completa
+        na conversa de planejamento; vale reler antes de implementar).
+        <br><br>
+        <strong>Requisito de interface para quando a v2 acontecer (não
+        negociável, mesmo espírito do aviso "LST ≠ temperatura do ar" da
+        Fase 6):</strong> a tela precisa avisar, em linguagem de leigo, que
+        o mapa de calor pré-2001 é mais incompleto e menos frequente que o
+        de 2001+, e por quê — algo como: <em>"Antes de 2001, usamos um
+        satélite mais antigo, que passa por Manaus com menos frequência e é
+        mais sensível a nuvem — comum na Amazônia. Por isso, vários meses
+        (ou partes do mapa) deste período não têm medição, e a cobertura é
+        menos completa que a partir de 2001."</em> Sem esse aviso, um buraco
+        no mapa parece bug, não limitação real do dado.
+      </dd></div>
+      <div class="fact"><dt>Continuidade pós-2026</dt><dd>Migrar para VIIRS só faz sentido depois que a série histórica estiver publicada e validada.</dd></div>
+    </dl>
+  </section>
+
+  <footer>
+    Gerado a partir do plano aprovado em 26/08/2026 · o progresso fica salvo no navegador
+    e, se você conectar, também num <code>progresso.json</code> no disco.
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================================================
+   1. O CONTEÚDO DO PLANO
+   Cada item tem um id estável — é a chave usada para guardar feito/não feito.
+   Nunca renomeie um id existente, senão o progresso salvo "perde" o item.
+   ========================================================================== */
+const FASES = [
+  {
+    id: "f0", num: "0", titulo: "Ambiente", sub: "nenhum satélite ainda",
+    objetivo: "Ter um projeto Python de verdade que roda — e entender o que é cada peça.",
+    blocos: [
+      { titulo: "O que estudar antes", itens: [
+        { id: "f0-e1", t: "Terminal básico: cd, ls, pwd, caminho absoluto × relativo",
+          p: "Todo o resto acontece no terminal. Sem isso você não sabe <em>onde</em> está quando dá erro.",
+          href: "https://www.freecodecamp.org/portuguese/news/guia-de-comandos-do-terminal-linux-e-macos/", hrefTxt: "guia em português" },
+        { id: "f0-e2", t: "O que é um ambiente virtual",
+          p: "A fonte nº 1 de confusão de iniciante: “instalei mas o Python não acha”. Um venv é uma pasta com uma cópia isolada do Python e só os pacotes deste projeto.",
+          href: "https://realpython.com/python-virtual-environments-a-primer/", hrefTxt: "Real Python (leia só “What Is a Virtual Environment?”)" },
+        { id: "f0-e3", t: "Ler um traceback",
+          p: "Você vai ler centenas. Regra de ouro: <strong>leia de baixo pra cima</strong> — a última linha é o erro, as de cima são o caminho até ele.",
+          href: "https://realpython.com/python-traceback/", hrefTxt: "Real Python: tracebacks" },
+        { id: "f0-e4", t: "import, módulo, pacote",
+          p: "Entender por que <code>import pandas</code> funciona e <code>import panda</code> não.",
+          href: "https://docs.python.org/pt-br/3/tutorial/modules.html", hrefTxt: "tutorial oficial, cap. 6" },
+        { id: "f0-e5", t: "Opcional: reforçar a sintaxe básica",
+          p: "Se listas, dicionários, <code>for</code>, funções e f-strings ainda estiverem frágeis. Mundo 1 e 2 bastam — não precisa terminar os três.",
+          href: "https://www.cursoemvideo.com/curso/python-3-mundo-1/", hrefTxt: "Curso em Vídeo, gratuito, em português" }
+      ]},
+      { titulo: "Já feito (por mim)", itens: [
+        { id: "f0-c1", t: "Estrutura de pastas criada", pre: true },
+        { id: "f0-c2", t: "<code>.gitignore</code> escrito", p: "Ignora o venv e os dados brutos (reproduzíveis), mas versiona os dados processados que o site precisa.", pre: true },
+        { id: "f0-c3", t: "<code>config.py</code> escrito", p: "136 linhas comentadas: bbox, período, IDs das coleções, fatores de escala, caminhos e pontos de referência para validação. Todo valor usado em mais de um script mora só ali.", pre: true }
+      ]},
+      { titulo: "Suas tarefas", codigo: "uv init --bare --python 3.12 --name mapa-amazonia --vcs none\nuv add earthengine-api pandas requests pyarrow matplotlib\ngit init",
+        nota: "<strong>Por que essas flags:</strong> <code>--bare</code> cria só o <code>pyproject.toml</code> — sem ele o uv espalha um <code>main.py</code> e um <code>README.md</code> de exemplo que não usamos. <code>--vcs none</code> impede o uv de rodar <code>git init</code> sozinho, o que sobrescreveria o <code>.gitignore</code> já escrito; por isso o <code>git init</code> vem separado, depois.<br><br>O primeiro comando pode demorar: como você tem Python 3.14 instalado, o uv vai <strong>baixar</strong> o 3.12 só para este projeto. Isso é esperado e não mexe no Python do sistema.",
+        itens: [
+        { id: "f0-t1", t: "Rodar <code>uv init</code>", p: "Fixamos o Python 3.12 porque bibliotecas geoespaciais demoram a publicar versões compiladas para a versão mais nova — e você não quer que sua primeira semana seja erro de compilação de C." },
+        { id: "f0-t2", t: "Rodar <code>uv add</code> com os cinco pacotes" },
+        { id: "f0-t3", t: "Rodar <code>git init</code>" },
+        { id: "f0-t4", t: "Rodar o teste de verificação", p: "<code>uv run python -c \"import ee, pandas; print(ee.__version__, pandas.__version__)\"</code>" }
+      ]}
+    ],
+    pronto: "O comando de teste imprime dois números de versão, sem erro. Se der <code>ModuleNotFoundError</code>, o <code>uv add</code> não completou — me traga a saída inteira do terminal."
+  },
+
+  {
+    id: "f1", num: "1", titulo: "Primeira série temporal real", sub: "Open-Meteo, ainda sem satélite",
+    objetivo: "Um gráfico da temperatura do ar em Manaus de 1940 até hoje, feito por você.",
+    intro: "Esta fase existe por um motivo pedagógico deliberado: você aprende <code>requests</code> + <code>pandas</code> + datas <strong>sem</strong> a complexidade do Earth Engine em cima. Se der erro, o erro é só de Python. E o resultado já é uma camada real do produto final — o “termômetro geral da cidade” que o brief pede como validação.",
+    blocos: [
+      { titulo: "O que estudar antes", itens: [
+        { id: "f1-e1", t: "O que é uma API HTTP e o que é JSON",
+          p: "A Open-Meteo devolve JSON. Sem entender a estrutura você não sabe onde estão os números.",
+          href: "https://developer.mozilla.org/pt-BR/docs/Learn_web_development/Extensions/Client-side_APIs/Introduction", hrefTxt: "MDN, em português" },
+        { id: "f1-e2", t: "requests: .get(), .json(), .status_code",
+          p: "São as três coisas que você usa. Ignore o resto da biblioteca por ora.",
+          href: "https://requests.readthedocs.io/en/latest/user/quickstart/", hrefTxt: "quickstart" },
+        { id: "f1-e3", t: "pandas: DataFrame e seleção de coluna",
+          p: "O objeto central de todo trabalho com dados em Python.",
+          href: "https://pandas.pydata.org/docs/user_guide/10min.html", hrefTxt: "10 minutes to pandas — leia até “Selection”" },
+        { id: "f1-e4", t: "pandas: datas e resample",
+          p: "Transformar dado diário em média mensal é exatamente o que o projeto inteiro faz.",
+          href: "https://pandas.pydata.org/docs/user_guide/timeseries.html#resampling", hrefTxt: "time series" },
+        { id: "f1-e5", t: "matplotlib básico",
+          p: "Ver o dado é como você descobre que ele está errado.",
+          href: "https://matplotlib.org/stable/tutorials/pyplot.html", hrefTxt: "pyplot tutorial" }
+      ]},
+      { titulo: "Construir — scripts/01_temperatura_ar.py", itens: [
+        { id: "f1-t1", t: "Montar o dicionário de parâmetros da URL", p: "Open-Meteo Archive API: grátis, sem chave, dados desde 1940." },
+        { id: "f1-t2", t: "Converter o JSON em DataFrame" },
+        { id: "f1-t3", t: "Converter a coluna de data para tipo data de verdade", p: "Enquanto for texto, <code>resample</code> não funciona." },
+        { id: "f1-t4", t: "Fazer o resample mensal e anual" },
+        { id: "f1-t5", t: "Salvar <code>data/processed/manaus_ar.parquet</code>" },
+        { id: "f1-t6", t: "Gerar o PNG do gráfico anual" }
+      ]}
+    ],
+    pronto: "O gráfico existe e mostra uma tendência de aquecimento visível ao longo das décadas. Se a linha estiver plana ou serrilhada de forma estranha, o dado está sendo lido errado — e descobrir isso é parte do exercício."
+  },
+
+  {
+    id: "f2", num: "2", titulo: "Earth Engine: conta e o primeiro número", sub: "o conceito mais importante do projeto",
+    objetivo: "Imprimir a temperatura de superfície média de Manaus num mês específico. Um número só — mas o caminho até ele é o que importa.",
+    blocos: [
+      { titulo: "Tarefas manuais, antes do código",
+        nota: "<strong>Sobre custo:</strong> o tier <em>Community</em> (padrão, sem cartão) dá <strong>150 EECU-horas por mês</strong>, renovadas todo dia 1º. Este projeto consome uma fração disso — exportar 25 anos de dados agregados numa área de 50×39 km é trabalho leve. Se um dia estourar, o efeito é ficar lento, não cobrança.",
+        itens: [
+        { id: "f2-m1", t: "Criar um projeto no Google Cloud com sua conta Google" },
+        { id: "f2-m2", t: "Habilitar a Earth Engine API nesse projeto" },
+        { id: "f2-m3", t: "Registrar como <strong>noncommercial</strong> e preencher o questionário", p: "Obrigatório para todos os projetos noncommercial desde 26/09/2025." },
+        { id: "f2-m4", t: "Anotar o Project ID e preencher <code>EE_PROJECT_ID</code> no <code>config.py</code>" }
+      ]},
+      { titulo: "O que estudar antes — a parte crítica",
+        nota: "<strong>Este é o conceito que faz iniciantes perderem dias no Earth Engine:</strong><br><br>No EE, <code>ee.Image</code>, <code>ee.Number</code> e <code>ee.List</code> <strong>não contêm dados</strong>. São <em>descrições</em> de um cálculo que ainda não aconteceu. O cálculo só roda quando você chama <code>.getInfo()</code> ou faz um <code>Export</code>.<br><br>Consequências que vão te morder se você não souber:<br>• <code>print(minha_imagem)</code> imprime a descrição, não o valor.<br>• Você <strong>não pode</strong> usar <code>if</code>, <code>for</code> ou <code>len()</code> do Python em objetos <code>ee.*</code> — tem que usar <code>.map()</code>, <code>ee.Filter</code>, <code>.size()</code>.<br>• Misturar valor Python com objeto <code>ee</code> na mesma conta às vezes funciona, às vezes dá erro críptico. Na dúvida, converta com <code>ee.Number(x)</code>.",
+        itens: [
+        { id: "f2-e1", t: "Client vs server", p: "Leia com atenção — é o pulo do gato.",
+          href: "https://developers.google.com/earth-engine/guides/client_server", hrefTxt: "guia oficial" },
+        { id: "f2-e2", t: "ImageCollection: filterDate, filterBounds, select",
+          href: "https://developers.google.com/earth-engine/guides/ic_creating", hrefTxt: "guia oficial" },
+        { id: "f2-e3", t: "reduceRegion — extrair um número de uma área",
+          href: "https://developers.google.com/earth-engine/guides/reducers_reduce_region", hrefTxt: "guia oficial" },
+        { id: "f2-e4", t: "Fator de escala e unidade",
+          p: "MOD11A2 vem em <strong>Kelvin × 0,02</strong>. Para °C: <code>valor * 0.02 - 273.15</code>. Errar isso é o erro clássico do projeto." }
+      ]},
+      { titulo: "Construir — scripts/02_ee_primeiro_teste.py", itens: [
+        { id: "f2-t1", t: "Autenticar e inicializar com seu Project ID" },
+        { id: "f2-t2", t: "Filtrar <code>MOD11A2</code> para julho de 2020 no bbox" },
+        { id: "f2-t3", t: "Calcular a média de <code>LST_Day_1km</code>, converter para °C e imprimir" }
+      ]}
+    ],
+    pronto: "O número impresso está entre ~28 °C e ~40 °C.<br>Se der 300 e pouco, você esqueceu de subtrair 273,15. Se der 6000, esqueceu o fator 0,02. Se der <code>null</code>, o filtro não pegou imagem nenhuma."
+  },
+
+  {
+    id: "f3", num: "3", titulo: "Temperatura mensal, 2001–2025", sub: "a primeira camada de verdade",
+    objetivo: "Uma tabela com temperatura média por célula, por mês, ao longo de 25 anos.",
+    blocos: [
+      { titulo: "O que estudar antes", itens: [
+        { id: "f3-e1", t: ".map() em ImageCollection", p: "Aplicar a mesma operação a centenas de imagens sem usar <code>for</code>.",
+          href: "https://developers.google.com/earth-engine/guides/ic_mapping", hrefTxt: "guia oficial" },
+        { id: "f3-e2", t: "Máscara por bitmask de QC", p: "<code>QC_Day</code> guarda a qualidade em <strong>bits</strong> dentro de um número — você precisa de operação bit a bit para descartar pixels ruins. Sem isso, entram medições contaminadas." },
+        { id: "f3-e3", t: "ee.List.sequence e composição mensal", p: "Como transformar composições de 8 dias em média de mês." },
+        { id: "f3-e4", t: "Export.table.toDrive e o painel Tasks", p: "A exportação é <strong>assíncrona</strong> — o script termina antes de o arquivo existir.",
+          href: "https://developers.google.com/earth-engine/guides/exporting_tables", hrefTxt: "guia oficial" }
+      ]},
+      { titulo: "Construir — scripts/03_lst_mensal.py",
+        nota: "<strong>Dia × noite — guardamos as duas.</strong> A LST <em>noturna</em> é a melhor métrica de ilha de calor urbana: mede quanto o concreto retém calor acumulado. A diurna é mais dramática visualmente. O brief não decidiu isso; a decisão é guardar ambas e escolher na visualização.",
+        itens: [
+        { id: "f3-t1", t: "Construir a grade de 1 km sobre o bbox", p: "Duas abordagens possíveis (<code>ee.Image.pixelLonLat()</code> + <code>reduceToVectors</code>, ou reaproveitar a grade nativa do MODIS) — mostro as duas na hora." },
+        { id: "f3-t2", t: "Para cada um dos 300 meses: filtrar, mascarar por QC, tirar média" },
+        { id: "f3-t3", t: "Extrair <code>LST_Day_1km</code> e <code>LST_Night_1km</code> por célula" },
+        { id: "f3-t4", t: "Exportar como CSV para o Google Drive" },
+        { id: "f3-t5", t: "Acompanhar a task até concluir no painel do EE" }
+      ]}
+    ],
+    pronto: "O CSV tem cerca de 1.950 × 300 linhas, e a média de julho de 2020 bate com o número que você obteve na Fase 2."
+  },
+
+  {
+    id: "f4", num: "4", titulo: "NDVI mensal, na mesma grade", sub: "a camada de vegetação",
+    objetivo: "A camada de vegetação, alinhada célula a célula com a de temperatura.",
+    blocos: [
+      { titulo: "O que estudar antes", itens: [
+        { id: "f4-e1", t: "O que é NDVI e o que ele mede", p: "<code>(NIR − Vermelho) / (NIR + Vermelho)</code>. Vai de −1 a 1. Floresta densa ~0,8–0,9; asfalto ~0,1; água <strong>negativa</strong>." },
+        { id: "f4-e2", t: "SummaryQA do MOD13Q1", p: "Mais simples que o QC da temperatura: 0 = ótimo, 1 = bom, 2 = nuvem/neve, 3 = inválido. Fique com 0 e 1." },
+        { id: "f4-e3", t: "reduceResolution", p: "O mecanismo que agrega 250 m → 1 km respeitando a grade." },
+        { id: "f4-e4", t: "Fator de escala 0,0001", p: "NDVI vem como inteiro: 8000 significa 0,8." }
+      ]},
+      { titulo: "Construir — scripts/04_ndvi_mensal.py",
+        nota: "<strong>Atenção ao Rio Negro.</strong> Água tem NDVI negativo e vai puxar para baixo qualquer célula que a contenha. Sem uma máscara de água (<code>JRC/GSW1_4</code>, banda <code>occurrence</code>), o rio apareceria no mapa como “área degradada”. Isso não estava no brief — é um erro real que apareceria no produto final.",
+        itens: [
+        { id: "f4-t1", t: "Mesma estrutura da Fase 3, com <code>MOD13Q1</code> e composições de 16 dias" },
+        { id: "f4-t2", t: "Agregar de 250 m para a grade de 1 km" },
+        { id: "f4-t3", t: "Aplicar a máscara de água e decidir o limiar de <code>occurrence</code>", p: "Que valor exatamente, decidimos olhando o resultado." },
+        { id: "f4-t4", t: "Exportar e acompanhar a task" }
+      ]}
+    ],
+    pronto: "Uma célula sobre a Reserva Ducke dá NDVI ~0,85 e uma sobre o Centro dá ~0,3 ou menos. Se não separar, algo está errado."
+  },
+
+  {
+    id: "f5", num: "5", titulo: "Montar as tabelas finais", sub: "o que o site consome",
+    objetivo: "Transformar os CSVs crus nos arquivos que o front-end vai ler.",
+    blocos: [
+      { titulo: "O que estudar antes", itens: [
+        { id: "f5-e1", t: "pd.merge", p: "Juntar a tabela de temperatura com a de NDVI por <code>cell_id</code> + <code>ano</code> + <code>mes</code>." },
+        { id: "f5-e2", t: "Parquet × CSV", p: "Parquet é binário, comprimido e guarda os tipos das colunas. Cerca de 10× menor." },
+        { id: "f5-e3", t: "Valores faltantes (NaN)", p: "Meses muito nublados vão ter célula sem dado. Decisão: <strong>deixar como nulo</strong>, não interpolar — o site mostra “sem dado” em vez de inventar número." },
+        { id: "f5-e4", t: "Checagens de sanidade com assert", p: "Todo dado que vai a público precisa passar por: faixa plausível, contagem de linhas, contagem de nulos." }
+      ]},
+      { titulo: "Construir — scripts/05_montar_tabelas.py", itens: [
+        { id: "f5-t1", t: "Ler os CSVs e fazer o merge" },
+        { id: "f5-t2", t: "Escrever os asserts de sanidade", p: "LST entre 10 e 60 °C, NDVI entre −1 e 1. Os limites já estão no <code>config.py</code>." },
+        { id: "f5-t3", t: "Particionar por ano e salvar os 25 Parquet" },
+        { id: "f5-t4", t: "Gerar o <code>grade.geojson</code>" }
+      ]}
+    ],
+    pronto: "25 arquivos Parquet existem, nenhuma asserção falha, e o total de linhas bate com o esperado."
+  },
+
+  {
+    id: "f6", num: "6", titulo: "Front-end", sub: "esta parte eu escrevo",
+    objetivo: "O mapa interativo — MapLibre GL JS, sem token, sem conta.",
+    blocos: [
+      { titulo: "O que eu entrego", itens: [
+        { id: "f6-c1", t: "Slider de tempo mês/ano sobre <strong>1940–2025</strong>, granularidade mudando em 2001", p: "1940–2000: o bbox inteiro pintado de uma cor só (Open-Meteo, sem subdivisão — a fonte não sustenta mais que isso). 2001–2025: a grade completa de ~1.950 células (MODIS). Ver decisão em “Decisões de arquitetura” acima — não é um bug do slider parecer “menos detalhado” antes de 2001, é o dado de verdade." },
+        { id: "f6-c2", t: "Camadas alternáveis (2001+): LST diurna, LST noturna, NDVI e <strong>anomalia</strong>", p: "A camada de anomalia — desvio em relação à média histórica daquela célula — é o que revela mudança. Valor absoluto não revela." },
+        { id: "f6-c3", t: "Clique numa célula abre o gráfico dos 25 anos dela (2001+); clique em qualquer ponto antes de 2001 abre a série inteira da Open-Meteo (1940+)" },
+        { id: "f6-c4", t: "Série da Open-Meteo como contexto de fundo, o tempo todo" },
+        { id: "f6-c5", t: "Uma seção (\"De onde vêm esses números\"/\"Sobre\") citando os estudos que embasaram o projeto", p: "Ver bloco abaixo — não é rodapé decorativo, é parte do que dá credibilidade ao site." },
+        { id: "f6-c6", t: "Toggle \"corrigir deriva orbital do satélite\", <strong>ligado por padrão</strong>, com explicação visível", p: "Perto do fim da missão (2020+) o satélite Terra passa cada vez mais cedo sobre Manaus (confirmado com a própria banda <code>Day_view_time</code> do MOD11A2, Fase 5b) — isso faz a superfície aparecer artificialmente mais fria em 2021-2025 (pior em 2023-2025), sem a cidade ter esfriado de verdade. O gráfico usa <code>lst_dia_c_corrigido</code>/<code>lst_noite_c_corrigido</code> por padrão; o toggle desliga e volta pro dado bruto (<code>lst_dia_c</code>/<code>lst_noite_c</code>). Texto de explicação e as limitações do método (uma única hora por mês pro bbox inteiro, fator de amplificação único dia/noite) já estão prontos em <code>data/processed/criterios_limpeza.json</code> (campos <code>explicacao_usuario</code> e <code>metodologia.limitacoes</code> da entrada <code>deriva_orbital_terra</code>) — não escrever esse texto do zero na Fase 6, usar o de lá." },
+        { id: "f6-c7", t: "Citar fonte de anomalias/eventos reais ao lado de picos e vales no gráfico", p: "<code>data/processed/eventos_anomalias.json</code> tem 7 eventos catalogados (secas 2005/2023/2024, cheias 2009/2012, friagem 2001, La Niña 2024-2025, deriva orbital) com período, efeito esperado nos dados e fontes reais — cada um marcado com <code>verificado_por</code> (\"pesquisa\" com URL, ou \"usuario\" quando não achei fonte com link). Não citar o item da friagem de 2001 como \"fonte confirmada\" — ele está marcado como não verificado por URL." }
+      ]},
+      { titulo: "Estudos que guiaram o projeto — citar na interface, explicando como cada um ajudou",
+        nota: "<strong>Aviso de honestidade, não negociável (mesmo espírito do LST ≠ ar).</strong> Não é bibliografia acadêmica pra decorar rodapé — é a resposta a “como eu sei que isso não foi inventado?”. A interface precisa contar, em linguagem de leigo, que os pontos de validação e a motivação do projeto vêm de pesquisa real já publicada sobre Manaus, não de suposição do projeto.",
+        itens: [
+        { id: "f6-e1", t: "Estudo da UEA (2002–2012)", p: "Mapeou picos de ilha de calor concentrados em Aleixo, Petrópolis, Cidade Nova, Tancredo Neves, Zumbi e Japiim. <strong>Como guiou o projeto:</strong> é de onde vieram os <code>PONTOS_REFERENCIA</code> do <code>config.py</code> — a Fase 7 valida o pipeline checando se ele reproduz esse padrão já conhecido, em vez de inventar do zero onde procurar ilha de calor." },
+        { id: "f6-e2", t: "InfoAmazonia (reportagem com dado de satélite)", p: "Mediu até 10 °C de diferença entre ilhas de calor e floresta preservada; mais de 85% da população de Manaus vive em bairros pelo menos 3 °C mais quentes que a área preservada. <strong>Como guiou o projeto:</strong> deu a escala esperada do efeito — a referência de “esse resultado é plausível ou é erro de processamento?”." },
+        { id: "f6-e3", t: "MapBiomas/Inpa + Censo IBGE 2022", p: "Manaus é a capital que mais perdeu vegetação urbana nos últimos 20 anos; taxa de arborização de vias públicas de apenas 44,81%. <strong>Como guiou o projeto:</strong> sustenta a motivação central — a hipótese de que perda de vegetação e aumento de temperatura andam juntos em Manaus não é um palpite, já havia sinal disso na literatura." },
+        { id: "f6-e4", t: "Grupo de pesquisa “Árvores do Asfalto” (UFAM)", p: "Grupo ativo no tema. <strong>Como guiou o projeto:</strong> citado como referência viva, não só histórica — possível fonte ou contato para validação ou dados adicionais numa v2." }
+      ]},
+      { titulo: "O que você faz",
+        codigo: "uv run python -m http.server -d site 8000",
+        nota: "<strong>Aviso de honestidade, não negociável.</strong> LST <strong>não é</strong> temperatura do ar: o asfalto pode marcar 50 °C de superfície enquanto o ar está a 33 °C. Rotular LST como “temperatura” seria enganoso para quem lê o site. Ele precisa dizer <em>temperatura de superfície</em> e explicar a diferença — e é por isso que manter a camada Open-Meteo (temperatura do ar real) ao lado vale a pena.",
+        itens: [
+        { id: "f6-t1", t: "Rodar o servidor local e abrir no navegador" },
+        { id: "f6-t2", t: "Ajustar paleta de cores, textos e rótulos" },
+        { id: "f6-t3", t: "Conferir que o site diz “temperatura de superfície” em todo lugar" }
+      ]}
+    ],
+    pronto: "O slider percorre 1940 → 2025 sem travar; a mudança de granularidade em 2001 é visível e explicada (não parece um bug); nenhum buraco de dado aparece sem explicação."
+  },
+
+  {
+    id: "f7", num: "7", titulo: "Validação contra o mundo real", sub: "antes de publicar",
+    objetivo: "Confirmar que o pipeline reproduz padrões que a literatura já descreveu. Se não reproduzir, isso é informação — não motivo para esconder.",
+    blocos: [
+      { titulo: "Os quatro testes", itens: [
+        { id: "f7-t1", t: "Estudo da UEA (2002–2012): picos no centro-sul e sul", p: "Aleixo, Petrópolis, Cidade Nova, Japiim aparecem entre as células mais quentes? As coordenadas aproximadas já estão em <code>PONTOS_REFERENCIA</code> no <code>config.py</code> — confira num mapa antes de usar como prova." },
+        { id: "f7-t2", t: "InfoAmazonia: até 10 °C entre cidade e floresta", p: "A diferença entre uma célula do Centro e uma da Ducke chega perto disso?" },
+        { id: "f7-t3", t: "InfoAmazonia: mais de 85% da população em áreas ≥ 3 °C acima da preservada", p: "Que fração das células urbanas passa de +3 °C?" },
+        { id: "f7-t4", t: "MapBiomas/Inpa: Manaus é a capital que mais perdeu vegetação urbana", p: "O NDVI médio das células urbanas cai de forma consistente ao longo dos 25 anos?" }
+      ]},
+      { titulo: "As duas armadilhas",
+        nota: "<strong>Deriva de órbita.</strong> Nos últimos anos da missão, Terra e Aqua saíram da órbita projetada e o <strong>horário local de passagem mudou</strong>. Uma medição feita às 10h30 não é comparável a uma feita ao meio-dia — o sol está em outro ângulo. Isso pode criar uma <em>falsa tendência de aquecimento</em> no fim da série. O <code>MOD11A2</code> traz a banda <code>Day_view_time</code> justamente para isso.",
+        itens: [
+        { id: "f7-a1", t: "Plotar <code>Day_view_time</code> ao longo dos 25 anos", p: "Se houver deriva relevante: ou restringir a análise, ou declarar a limitação abertamente no site." },
+        { id: "f7-a2", t: "Revisar a redação do site quanto a causalidade", p: "Mesmo que temperatura suba e NDVI caia juntos, isso é <strong>correlação</strong>. O site pode mostrar a relação; não pode afirmar causalidade sem controlar outras variáveis. A redação importa." },
+        { id: "f7-a3", t: "Escrever o resultado dos quatro testes — inclusive os que falharem" }
+      ]}
+    ],
+    pronto: "Os quatro testes têm resultado escrito, e as duas armadilhas foram checadas ou declaradas como limitação."
+  },
+
+  {
+    id: "f8", num: "8", titulo: "Publicar", sub: "site estático, sem servidor e sem custo",
+    objetivo: "O mapa no ar, num endereço público.",
+    blocos: [
+      { titulo: "O que estudar antes", itens: [
+        { id: "f8-e1", t: "git add, commit, push", p: "E o que é um repositório remoto." }
+      ]},
+      { titulo: "Tarefas", itens: [
+        { id: "f8-t1", t: "Criar o repositório no GitHub e dar push" },
+        { id: "f8-t2", t: "Ativar GitHub Pages (ou Cloudflare Pages)" },
+        { id: "f8-t3", t: "Conferir o site no ar, no celular também" }
+      ]}
+    ],
+    pronto: "O endereço público abre, o mapa carrega e o slider funciona."
+  }
+];
+
+/* ==========================================================================
+   2. ESTADO E PERSISTÊNCIA
+   Três camadas, da mais automática para a mais manual:
+     a) localStorage      — salva sozinho, mas vive dentro do navegador
+     b) File System Access — grava num progresso.json de verdade (Chrome/Edge)
+     c) Exportar/Importar  — funciona em qualquer navegador
+   ========================================================================== */
+const STORE_KEY = "mapa-amazonia-progresso-v1";
+const IDB_NAME  = "mapa-amazonia";
+const IDB_STORE = "handles";
+
+let estado = {};        // { "f0-t1": true, ... }
+let fileHandle = null;  // handle do progresso.json, quando conectado
+let temLocalStorage = true;
+
+/* --- localStorage, com rede de proteção -------------------------------- */
+// O Safari às vezes bloqueia localStorage em páginas file://. Se isso
+// acontecer, o try/catch evita que a página inteira quebre — só perdemos o
+// salvamento automático, e os botões Exportar/Importar seguem funcionando.
+function lerLocal() {
+  try {
+    const cru = localStorage.getItem(STORE_KEY);
+    return cru ? JSON.parse(cru) : {};
+  } catch (e) { temLocalStorage = false; return {}; }
+}
+function gravarLocal() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(estado)); }
+  catch (e) { temLocalStorage = false; }
+}
+
+/* --- IndexedDB: guarda o handle do arquivo entre sessões ---------------- */
+// Um FileSystemFileHandle pode ser guardado no IndexedDB. Sem isso, você teria
+// que reapontar o arquivo toda vez que recarregasse a página.
+function idb(modo, fn) {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => {
+      const tx = req.result.transaction(IDB_STORE, modo);
+      const r = fn(tx.objectStore(IDB_STORE));
+      tx.oncomplete = () => resolve(r && r.result);
+      tx.onerror = () => reject(tx.error);
+    };
+  });
+}
+const salvarHandle = (h) => idb("readwrite", (s) => s.put(h, "progresso"));
+const lerHandle    = ()  => idb("readonly",  (s) => s.get("progresso"));
+const apagarHandle = ()  => idb("readwrite", (s) => s.delete("progresso"));
+
+/* --- Escrita no arquivo, com debounce ----------------------------------- */
+// Debounce = "espere parar de clicar antes de gravar". Sem isso, marcar dez
+// itens rápido dispararia dez escritas em disco.
+let timerGravacao = null;
+function agendarGravacaoArquivo() {
+  if (!fileHandle) return;
+  clearTimeout(timerGravacao);
+  timerGravacao = setTimeout(gravarArquivo, 400);
+}
+async function gravarArquivo() {
+  if (!fileHandle) return;
+  try {
+    const w = await fileHandle.createWritable();
+    await w.write(JSON.stringify(montarPayload(), null, 2));
+    await w.close();
+    setStatus("on", "salvo em " + fileHandle.name);
+  } catch (e) {
+    setStatus("warn", "não consegui gravar no arquivo");
+    fileHandle = null;
+  }
+}
+
+function montarPayload() {
+  return {
+    projeto: "mapa-amazonia",
+    versao: 1,
+    atualizado_em: new Date().toISOString(),
+    concluidos: Object.keys(estado).filter((k) => estado[k]).sort(),
+    total_itens: todosOsIds().length
+  };
+}
+function aplicarPayload(obj) {
+  if (!obj) return false;
+  // Aceita tanto o formato exportado quanto um objeto plano {id: true}.
+  const lista = Array.isArray(obj.concluidos)
+    ? obj.concluidos
+    : Object.keys(obj).filter((k) => obj[k] === true);
+  estado = {};
+  lista.forEach((id) => { estado[id] = true; });
+  return true;
+}
+
+/* --- Conectar / reconectar o arquivo ------------------------------------ */
+const temFSA = typeof window.showSaveFilePicker === "function";
+
+async function conectarArquivo() {
+  if (!temFSA) {
+    toast("Este navegador não grava em arquivo. Use Exportar/Importar, ou abra no Chrome.");
+    return;
+  }
+  try {
+    const h = await window.showSaveFilePicker({
+      suggestedName: "progresso.json",
+      types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
+    });
+    // Se o arquivo escolhido já tiver conteúdo, ele manda — assim você não
+    // perde o progresso ao reconectar num arquivo antigo.
+    try {
+      const f = await h.getFile();
+      if (f.size > 0) {
+        const txt = await f.text();
+        if (aplicarPayload(JSON.parse(txt))) {
+          gravarLocal();
+          render();
+          toast("Progresso carregado do arquivo.");
+        }
+      }
+    } catch (e) { /* arquivo novo ou ilegível: seguimos com o estado atual */ }
+
+    fileHandle = h;
+    await salvarHandle(h);
+    await gravarArquivo();
+  } catch (e) { /* usuário cancelou o seletor */ }
+}
+
+async function tentarReconectar() {
+  if (!temFSA) return;
+  let h;
+  try { h = await lerHandle(); } catch (e) { return; }
+  if (!h) return;
+  const perm = await h.queryPermission({ mode: "readwrite" });
+  if (perm === "granted") {
+    fileHandle = h;
+    try {
+      const f = await h.getFile();
+      if (f.size > 0 && aplicarPayload(JSON.parse(await f.text()))) {
+        gravarLocal(); render();
+      }
+    } catch (e) {}
+    setStatus("on", "salvo em " + h.name);
+  } else {
+    // O navegador exige um clique para devolver a permissão após recarregar.
+    setStatus("warn", "clique em Reconectar para voltar a gravar em " + h.name);
+    const b = document.getElementById("btn-conectar");
+    b.textContent = "Reconectar " + h.name;
+    b.onclick = async () => {
+      const p = await h.requestPermission({ mode: "readwrite" });
+      if (p === "granted") {
+        fileHandle = h;
+        b.textContent = "Conectar progresso.json";
+        b.onclick = conectarArquivo;
+        await gravarArquivo();
+      } else {
+        toast("Permissão negada.");
+      }
+    };
+  }
+}
+
+/* --- Exportar / importar ------------------------------------------------ */
+function exportar() {
+  const blob = new Blob([JSON.stringify(montarPayload(), null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "progresso.json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast("progresso.json baixado.");
+}
+function importar(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      aplicarPayload(JSON.parse(r.result));
+      gravarLocal(); agendarGravacaoArquivo(); render();
+      toast("Progresso importado.");
+    } catch (e) { toast("Não consegui ler esse arquivo."); }
+  };
+  r.readAsText(file);
+}
+
+/* ==========================================================================
+   3. RENDERIZAÇÃO
+   ========================================================================== */
+function todosOsIds() {
+  const ids = [];
+  FASES.forEach((f) => f.blocos.forEach((b) => (b.itens || []).forEach((i) => ids.push(i.id))));
+  return ids;
+}
+function idsDaFase(f) {
+  const ids = [];
+  f.blocos.forEach((b) => (b.itens || []).forEach((i) => ids.push(i.id)));
+  return ids;
+}
+
+function itemHTML(it) {
+  const feito = !!estado[it.id];
+  let porque = it.p || "";
+  if (it.href) {
+    porque += (porque ? " " : "") +
+      '<a href="' + it.href + '" target="_blank" rel="noopener">' + (it.hrefTxt || "abrir") + " ↗</a>";
+  }
+  return '<li class="' + (feito ? "checked" : "") + '">' +
+    '<input type="checkbox" data-id="' + it.id + '"' + (feito ? " checked" : "") + '>' +
+    '<label class="item-txt" data-for="' + it.id + '">' +
+      '<span class="t">' + it.t + "</span>" +
+      (porque ? '<span class="porque">' + porque + "</span>" : "") +
+    "</label></li>";
+}
+
+function faseHTML(f) {
+  const ids = idsDaFase(f);
+  const feitos = ids.filter((i) => estado[i]).length;
+  const completa = feitos === ids.length && ids.length > 0;
+  const pct = ids.length ? Math.round((feitos / ids.length) * 100) : 0;
+
+  let corpo = "";
+  if (f.intro) corpo += '<p style="font-size:0.93rem;color:var(--muted);margin-top:1rem">' + f.intro + "</p>";
+  corpo += '<p class="objetivo"><strong>Objetivo:</strong> ' + f.objetivo + "</p>";
+
+  f.blocos.forEach((b) => {
+    corpo += '<div class="bloco-titulo">' + b.titulo + "</div>";
+    if (b.nota) corpo += '<div class="callout">' + b.nota + "</div>";
+    if (b.codigo) corpo += "<pre><code>" + b.codigo + "</code></pre>";
+    if (b.itens) corpo += '<ul class="itens">' + b.itens.map(itemHTML).join("") + "</ul>";
+  });
+
+  if (f.pronto) corpo += '<div class="pronto"><b>Pronto quando</b>' + f.pronto + "</div>";
+
+  return '<div class="phase' + (completa ? " done" : "") + '" id="' + f.id + '">' +
+    '<button class="phase-head" data-fase="' + f.id + '">' +
+      '<span class="phase-num">' + (completa ? "✓" : f.num) + "</span>" +
+      '<span class="phase-title">' + f.titulo + "<em>" + f.sub + "</em></span>" +
+      '<span class="phase-meta">' + feitos + "/" + ids.length + "</span>" +
+      '<span class="chev">❯</span>' +
+    "</button>" +
+    '<div class="phase-bar"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="phase-body">' + corpo + "</div></div>";
+}
+
+function render() {
+  // Guarda quais fases estavam abertas para não fechá-las ao redesenhar.
+  const abertas = new Set(
+    [...document.querySelectorAll(".phase.open")].map((el) => el.id)
+  );
+  document.getElementById("fases").innerHTML = FASES.map(faseHTML).join("");
+  abertas.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add("open");
+  });
+
+  const ids = todosOsIds();
+  const feitos = ids.filter((i) => estado[i]).length;
+  const pct = ids.length ? Math.round((feitos / ids.length) * 100) : 0;
+  document.getElementById("bar-global").style.width = pct + "%";
+  document.getElementById("pct-global").textContent = feitos + "/" + ids.length;
+}
+
+/* ==========================================================================
+   4. INTERAÇÃO
+   ========================================================================== */
+function setStatus(tipo, txt) {
+  const d = document.getElementById("dot");
+  d.className = "dot" + (tipo ? " " + tipo : "");
+  document.getElementById("status-txt").textContent = txt;
+}
+let timerToast;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(timerToast);
+  timerToast = setTimeout(() => t.classList.remove("show"), 2600);
+}
+
+document.addEventListener("change", (e) => {
+  const cb = e.target.closest('input[type="checkbox"][data-id]');
+  if (!cb) return;
+  const id = cb.dataset.id;
+  if (cb.checked) estado[id] = true; else delete estado[id];
+  gravarLocal();
+  agendarGravacaoArquivo();
+  render();
+});
+
+// Clicar no texto do item também marca — alvo maior, menos precisão exigida.
+document.addEventListener("click", (e) => {
+  const lbl = e.target.closest(".item-txt[data-for]");
+  if (lbl && !e.target.closest("a")) {
+    const cb = document.querySelector('input[data-id="' + lbl.dataset.for + '"]');
+    if (cb) { cb.checked = !cb.checked; cb.dispatchEvent(new Event("change", { bubbles: true })); }
+    return;
+  }
+  const head = e.target.closest(".phase-head");
+  if (head) document.getElementById(head.dataset.fase).classList.toggle("open");
+});
+
+document.getElementById("btn-abrir").onclick = () =>
+  document.querySelectorAll(".phase").forEach((p) => p.classList.add("open"));
+document.getElementById("btn-fechar").onclick = () =>
+  document.querySelectorAll(".phase").forEach((p) => p.classList.remove("open"));
+document.getElementById("btn-limpar").onclick = () => {
+  if (!confirm("Isso desmarca todos os itens. Continuar?")) return;
+  estado = {}; gravarLocal(); agendarGravacaoArquivo(); render();
+  toast("Progresso zerado.");
+};
+document.getElementById("btn-conectar").onclick = conectarArquivo;
+document.getElementById("btn-exportar").onclick = exportar;
+document.getElementById("btn-importar").onclick = () => document.getElementById("file-input").click();
+document.getElementById("file-input").onchange = (e) => {
+  if (e.target.files[0]) importar(e.target.files[0]);
+  e.target.value = "";
+};
+
+document.getElementById("btn-tema").onclick = () => {
+  const atual = document.documentElement.getAttribute("data-theme");
+  const escuro = atual
+    ? atual === "dark"
+    : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme", escuro ? "light" : "dark");
+};
+
+/* ==========================================================================
+   5. ARRANQUE
+   ========================================================================== */
+estado = lerLocal();
+
+// Primeira visita: a Fase 0 já tem três itens feitos (o que eu entreguei).
+if (Object.keys(estado).length === 0) {
+  FASES.forEach((f) => f.blocos.forEach((b) =>
+    (b.itens || []).forEach((i) => { if (i.pre) estado[i.id] = true; })
+  ));
+  gravarLocal();
+}
+
+render();
+document.getElementById("f0").classList.add("open");
+
+if (!temLocalStorage) {
+  setStatus("warn", "este navegador não guarda estado em file:// — use Exportar antes de fechar");
+} else if (temFSA) {
+  setStatus("", "salvo no navegador · conecte um arquivo para gravar em disco");
+} else {
+  setStatus("on", "salvo no navegador · este navegador não grava em arquivo (use Exportar)");
+  document.getElementById("btn-conectar").disabled = true;
+  document.getElementById("btn-conectar").title = "Disponível no Chrome ou Edge";
+}
+tentarReconectar();
+</script>
+</body>
+</html>
