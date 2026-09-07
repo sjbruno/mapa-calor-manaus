@@ -1,8 +1,8 @@
 """
-Fase 5 — Montar as tabelas finais
+Monta as tabelas finais: junta LST + NDVI, limpa e exporta.
 
-Transforma os dois CSVs crus (Fase 3: LST; Fase 4: NDVI) nos arquivos que o
-front-end (Fase 6) vai efetivamente ler: um Parquet por ano com temperatura
+Transforma os dois CSVs crus (03_lst_mensal.py e 04_ndvi_mensal.py) nos
+arquivos que o site vai efetivamente ler: um Parquet por ano com temperatura
 e vegetação já juntas por célula/mês, e um `grade.geojson` com a geometria
 das ~2.040 células (baixado do Earth Engine, já que os CSVs só têm o
 centroide de cada célula, não o polígono inteiro).
@@ -39,12 +39,12 @@ COLUNA_NDVI = "ndvi"
 
 def carregar_e_juntar() -> pd.DataFrame:
     """
-    Junta as duas tabelas por (cell_id, ano, mes) — a chave que Fase 3 e
-    Fase 4 compartilham porque usaram a mesma grade (`grade.py`). `lon`/`lat`
-    existem nos dois CSVs (mesma origem), então descartamos a cópia do NDVI
-    e mantemos só a da LST, depois de conferir que são realmente iguais —
-    não confiar que "vêm da mesma grade" é garantia automática de que os
-    números batem é a mesma lição da Fase 4 (não confiar em comportamento
+    Junta as duas tabelas por (cell_id, ano, mes) — a chave que os dois
+    scripts anteriores compartilham porque usaram a mesma grade (`grade.py`).
+    `lon`/`lat` existem nos dois CSVs (mesma origem), então descartamos a
+    cópia do NDVI e mantemos só a da LST, depois de conferir que são
+    realmente iguais — não confiar que "vêm da mesma grade" é garantia
+    automática de que os números batem (não confiar em comportamento
     implícito do Earth Engine).
 
     `how="outer"` + `indicator=True` em vez de `how="inner"`: um inner merge
@@ -61,8 +61,8 @@ def carregar_e_juntar() -> pd.DataFrame:
         comparacao["lat"], comparacao["lat_ndvi"]
     )
     assert coordenadas_batem, (
-        "lon/lat de LST e NDVI divergem para o mesmo cell_id — Fase 3 e Fase 4 "
-        "não usaram a mesma grade?"
+        "lon/lat de LST e NDVI divergem para o mesmo cell_id — os scripts de "
+        "LST e NDVI não usaram a mesma grade?"
     )
 
     ndvi_sem_coordenadas = ndvi.drop(columns=["lon", "lat"])
@@ -73,7 +73,7 @@ def carregar_e_juntar() -> pd.DataFrame:
     apenas_de_um_lado = tabela[tabela["_merge"] != "both"]
     assert apenas_de_um_lado.empty, (
         f"{len(apenas_de_um_lado)} linhas existem só em LST ou só em NDVI "
-        "— Fase 3 e Fase 4 deveriam ter processado exatamente a mesma "
+        "— os dois scripts deveriam ter processado exatamente a mesma "
         "grade e o mesmo período."
     )
     tabela = tabela.drop(columns=["_merge"])
@@ -105,15 +105,15 @@ def aplicar_faixas_plausiveis(tabela: pd.DataFrame) -> pd.DataFrame:
     mostra "sem dado" em vez de um número inventado ou, pior, um número
     fisicamente impossível.
 
-    Achado real ao rodar esta fase: 58 de 612.000 leituras de `lst_dia_c`
+    Achado real ao rodar esta limpeza: 58 de 612.000 leituras de `lst_dia_c`
     (0,009%) vinham abaixo de 10°C — até -7,49°C, impossível pra superfície
     em Manaus. Concentradas em poucos meses específicos (2006-05, 2008-03,
     2007-03, entre outros) e com `lst_noite_c` nulo na mesma célula/mês —
     sinal de composição mensal formada por pouquíssimos pixels, um deles
-    contaminado por nuvem que passou pelo QC da Fase 3 (o QC ali aceita a
-    flag "erro médio <= 2K", que não é uma garantia absoluta de céu limpo,
-    só a garantia que existia disponível). Documentado em detalhe no
-    ESTUDO.md.
+    contaminado por nuvem que passou pelo QC de 03_lst_mensal.py (o QC ali
+    aceita a flag "erro médio <= 2K", que não é uma garantia absoluta de
+    céu limpo, só a garantia que existia disponível). Detalhes completos em
+    `data/processed/criterios_limpeza.json`.
     """
     faixas = {
         "lst_dia_c": (LST_MIN_C, LST_MAX_C),
@@ -148,7 +148,8 @@ def filtrar_inversao_termica(tabela: pd.DataFrame) -> pd.DataFrame:
     cidade (22-33°C, igual ao resto do dataset) mas `lst_dia_c` caía pra
     10-26°C, bem abaixo do normal — ou seja, é sempre a leitura diurna que
     está contaminada, nunca a noturna. Por isso só `lst_dia_c` vira nulo
-    aqui, não as duas. Detalhes e números completos no ESTUDO.md.
+    aqui, não as duas. Detalhes e números completos em
+    `data/processed/criterios_limpeza.json`.
     """
     ambos_presentes = tabela["lst_dia_c"].notna() & tabela["lst_noite_c"].notna()
     inversao_grande = ambos_presentes & (
@@ -177,9 +178,9 @@ def filtrar_anomalias_climatologicas(tabela: pd.DataFrame) -> pd.DataFrame:
     em outros junhos). A julgar só pelo formato dos dados (pico concentrado,
     some no mês seguinte) parecia um evento real de calor — mas junho/2001
     teve recorde de FRIO documentado em Manaus, e o mesmo mês teve 0% de
-    leitura noturna válida na grade inteira (ver ESTUDO.md): o "pico" era
-    sobra de poucos pixels de dia num mês excepcionalmente nublado, não um
-    evento de calor de verdade. Ao contrário da inversão dia/noite (uma
+    leitura noturna válida na grade inteira: o "pico" era sobra de poucos
+    pixels de dia num mês excepcionalmente nublado, não um evento de calor
+    de verdade. Ao contrário da inversão dia/noite (uma
     impossibilidade física clara), aqui o sinal de alarme é estatístico:
     `z` alto não prova erro, mas junto com uma completude de dado muito
     baixa naquele mês (visível na contagem de nulos), é forte evidência.
@@ -219,7 +220,7 @@ def checagens_de_sanidade(tabela: pd.DataFrame) -> None:
         valores = tabela[coluna].dropna()
         assert valores.between(minimo, maximo).all(), (
             f"{coluna} ainda tem valor fora de [{minimo}, {maximo}] "
-            "depois da limpeza — algo na Fase 5 não filtrou direito."
+            "depois da limpeza — algo neste script não filtrou direito."
         )
 
     ambos_presentes = tabela["lst_dia_c"].notna() & tabela["lst_noite_c"].notna()
@@ -240,9 +241,9 @@ def checagens_de_sanidade(tabela: pd.DataFrame) -> None:
 
 def salvar_parquets_por_ano(tabela: pd.DataFrame) -> None:
     """
-    Parquet particionado por ano (não um arquivo único): o front-end (Fase 6)
-    só precisa carregar o(s) ano(s) visível(is) no slider a cada momento,
-    não os 25 anos inteiros de uma vez.
+    Parquet particionado por ano (não um arquivo único): o site só precisa
+    carregar o(s) ano(s) visível(is) no slider a cada momento, não os 25
+    anos inteiros de uma vez.
     """
     DIR_PROCESSED.mkdir(parents=True, exist_ok=True)
     colunas_finais = ["cell_id", "lon", "lat", "ano", "mes"] + COLUNAS_LST + [COLUNA_NDVI]
@@ -264,14 +265,15 @@ def salvar_parquets_por_ano(tabela: pd.DataFrame) -> None:
 def _reprojetar_para_wgs84(celula: ee.Feature) -> ee.Feature:
     """
     `construir_grade()` desenha os retângulos em EPSG:3857 (Web Mercator,
-    metros) — necessário pra "1000 m" ter sentido ao montar a grade (Fases
-    3/4). Mas o formato GeoJSON (RFC 7946) exige coordenadas em WGS84
-    (EPSG:4326, graus de longitude/latitude); é o que o MapLibre GL (Fase 6)
-    espera ao ler um arquivo `.geojson`. Sem este passo, os polígonos
-    sairiam com coordenadas como `-6702000` (metros) em vez de `-60.20`
-    (graus) — carregariam sem erro, mas desenhariam a grade inteira fora do
-    mapa, ou em escala absurda. `maxError=1` (1 metro) é a tolerância de
-    aproximação aceita nessa reprojeção; irrelevante numa grade de 1 km.
+    metros) — necessário pra "1000 m" ter sentido ao montar a grade (LST e
+    NDVI). Mas o formato GeoJSON (RFC 7946) exige coordenadas em WGS84
+    (EPSG:4326, graus de longitude/latitude); é o que o MapLibre GL (usado
+    no site) espera ao ler um arquivo `.geojson`. Sem este passo, os
+    polígonos sairiam com coordenadas como `-6702000` (metros) em vez de
+    `-60.20` (graus) — carregariam sem erro, mas desenhariam a grade
+    inteira fora do mapa, ou em escala absurda. `maxError=1` (1 metro) é a
+    tolerância de aproximação aceita nessa reprojeção; irrelevante numa
+    grade de 1 km.
     """
     geometria_wgs84 = celula.geometry().transform("EPSG:4326", 1)
     return celula.setGeometry(geometria_wgs84)
@@ -279,14 +281,15 @@ def _reprojetar_para_wgs84(celula: ee.Feature) -> ee.Feature:
 
 def gerar_grade_geojson(n_celulas_esperado: int) -> None:
     """
-    Os CSVs só guardam o centroide de cada célula (`lon`, `lat`); o
-    front-end precisa do polígono inteiro pra desenhar a grade no mapa.
-    `construir_grade()` (mesma função usada nas Fases 3 e 4) recria essa
-    geometria; `.getInfo()` traz o FeatureCollection inteiro pro Python já
-    no formato GeoJSON padrão — viável aqui porque são só ~2.040 polígonos
-    retangulares simples, bem abaixo do limite de payload de uma chamada
-    direta (diferente das tabelas de 612 mil linhas, que precisaram do
-    fluxo assíncrono de Export.table.toDrive nas Fases 3 e 4).
+    Os CSVs só guardam o centroide de cada célula (`lon`, `lat`); o site
+    precisa do polígono inteiro pra desenhar a grade no mapa.
+    `construir_grade()` (mesma função usada nos scripts de LST e NDVI)
+    recria essa geometria; `.getInfo()` traz o FeatureCollection inteiro
+    pro Python já no formato GeoJSON padrão — viável aqui porque são só
+    ~2.040 polígonos retangulares simples, bem abaixo do limite de payload
+    de uma chamada direta (diferente das tabelas de 612 mil linhas, que
+    precisaram do fluxo assíncrono de Export.table.toDrive nos scripts de
+    LST e NDVI).
     """
     ee.Initialize(project=EE_PROJECT_ID)
     grade = (
@@ -337,7 +340,7 @@ def main() -> None:
     print("Gerando grade.geojson...")
     gerar_grade_geojson(n_celulas_esperado=tabela["cell_id"].nunique())
 
-    print("Fase 5 concluída.")
+    print("Concluído.")
 
 
 if __name__ == "__main__":

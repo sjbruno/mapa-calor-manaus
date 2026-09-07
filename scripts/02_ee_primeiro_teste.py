@@ -1,16 +1,13 @@
 """
-Fase 2 — Earth Engine: conta e o primeiro número
+Earth Engine: menor exemplo possível de um cálculo completo.
 
-Objetivo: imprimir a temperatura de superfície média de Manaus em julho de
-2020. Um número só — mas o caminho até ele é o conceito mais importante do
-projeto inteiro.
-
-O Earth Engine não processa nada na sua máquina. `ee.ImageCollection`,
-`ee.Image`, `ee.Geometry` e `ee.Number` são *descrições* de um cálculo, não
-o resultado em si. O cálculo de verdade só acontece no servidor do Google
-quando você chama `.getInfo()` (ou faz um Export) — é aí que a descrição
-vira número. Esse limite entre "descrever" e "executar" é o que a Fase 2
-existe para expor, com o cálculo mais simples possível.
+Imprime a temperatura de superfície média de Manaus em julho de 2020, com o
+cálculo mais simples possível — só pra deixar explícito um conceito central
+do Earth Engine: ele não processa nada na máquina local. `ee.ImageCollection`,
+`ee.Image`, `ee.Geometry` e `ee.Number` são *descrições* de um cálculo, não o
+resultado em si. O cálculo de verdade só acontece no servidor do Google
+quando `.getInfo()` é chamado (ou um Export é feito) — é aí que a descrição
+vira número.
 """
 
 import ee
@@ -28,8 +25,8 @@ from mapa_amazonia.config import (
 def inicializar() -> None:
     """
     Autentica (lê a credencial salva em ~/.config/earthengine/credentials,
-    gerada por `earthengine authenticate`, feito manualmente por você) e
-    associa as chamadas seguintes ao seu Project ID.
+    gerada por `earthengine authenticate`) e associa as chamadas seguintes
+    ao Project ID configurado.
     """
     ee.Initialize(project=EE_PROJECT_ID)
 

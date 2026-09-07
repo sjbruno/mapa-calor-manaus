@@ -1,14 +1,10 @@
 """
-Fase 1 — Primeira série temporal real (Open-Meteo)
+Série histórica de temperatura do ar em Manaus (Open-Meteo).
 
-Constrói uma série histórica da temperatura do ar em Manaus, de 1940 até hoje,
-sem depender do Earth Engine. Dois papéis nesta fase:
-
-1. Exercício isolado: requests + pandas + datas, sem a complexidade extra do
-   Earth Engine em cima. Se algo der errado aqui, o erro é só de Python.
-2. Camada real do produto final: o "termômetro geral da cidade" que o
-   CLAUDE.md do projeto pede como validação para as camadas de satélite (que
-   são espacialmente granulares, mas cobrem só 2001-2025).
+Constrói a série diária/mensal/anual da temperatura do ar em Manaus desde
+1940, sem depender do Earth Engine. Serve como "termômetro geral da cidade"
+para contextualizar e validar as camadas de satélite (que são espacialmente
+granulares, mas cobrem só 2001-2025).
 
 Fonte: Open-Meteo Archive API (reanálise ERA5) — gratuita, sem chave de
 acesso, com dados diários desde 1940.

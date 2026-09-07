@@ -1,0 +1,28 @@
+{
+  "_sobre": "Tópicos de debate urbanístico usados no site, com dados/fontes de apoio — diferente de eventos_anomalias.json (que explica anomalias nos DADOS DO PROJETO), isto aqui é contexto de política pública pra provocar discussão. Gerado 06/09/2026.",
+  "debates": [
+    {
+      "id": "palmeiras_imperiais",
+      "titulo": "Manaus já tentou arborizar com palmeiras imperiais — e não funcionou pra reduzir calor",
+      "tese": "O plantio de palmeiras imperiais (Roystonea oleracea) em avenidas de Manaus, entre 2004-2010, é um estudo de caso real de escolha de espécie inadequada pra arborização funcional — o mecanismo de por que ela não ajudaria contra calor é bem documentado (caule único sem copa lateral = quase nenhuma sombra; baixa evapotranspiração comparada a árvores de copa larga), mas isso é diferente de afirmar que a temperatura local mediu aumento por causa das palmeiras especificamente. Não há, nas fontes levantadas, uma medição de temperatura antes/depois isolando esse efeito de outros fatores (crescimento geral da cidade, outras obras, etc.) — por isso o caso é apresentado pelo mecanismo e pelo desfecho de manejo (atrofia, remoção), não por um número de temperatura atribuído às palmeiras.",
+      "linha_do_tempo_manaus": {
+        "2004": "Prefeitura (gestão Alfredo Nascimento) planta 120 palmeiras imperiais na Av. Djalma Batista, e também na Av. Max Teixeira (Zona Norte) e Grande Circular (Zona Leste). Investimento de até R$ 200 mil.",
+        "2010": "Das 120 palmeiras da Djalma Batista, 98 ficaram atrofiadas e 6 morreram — todas removidas da via nesse ano. Alcançaram só 5 m de altura em 6 anos, contra os 15 m que atingiriam em ambiente adequado (praça, não canteiro central).",
+        "depois": "Avenida Djalma Batista replantada com ipês (árvore nativa, copa larga, floração), que segundo reportagem de 2023 (Revista Cenarium) já floresciam havia 7 anos — sem repetir o problema."
+      },
+      "por_que_nao_funcionou_mecanismo": {
+        "ausencia_de_sombra": "Palmeira tem um caule único (estipe) com folhas concentradas só no topo — não projeta sombra substancial em calçada/asfalto, diferente de uma árvore de copa larga.",
+        "baixa_evapotranspiracao": "O resfriamento de uma árvore vem de dois mecanismos: sombreamento (a copa intercepta radiação solar antes que ela aqueça o pavimento) e evapotranspiração (vapor d'água liberado pelas folhas resfria o ar ao redor). Palmeira tem pouca folhagem lateral, logo contribui pouco pros dois.",
+        "citacao_especialista": "Ecólogo Willys Silva (citado por A Crítica) atribuiu o fracasso à 'falta de planejamento no plantio de árvores daquele porte em canteiros centrais' — deveriam ter ido pra praças, não pra canteiros de avenida com tráfego intenso."
+      },
+      "magnitude_do_efeito_arvore_vs_sem_arvore": "Referências gerais (não específicas de Manaus, e não atribuídas ao caso da Djalma Batista): área arborizada pode ficar de -4°C a -12°C mais fria que área não-arborizada em espaço urbanizado (Nature Communications, 2021); parques com dossel denso registram até -2°C vs. área construída adjacente (pesquisa ETH Zurique). Servem pra dar ordem de grandeza do que uma árvore de copa larga PODERIA entregar — não como medição do que aconteceu especificamente em Manaus com as palmeiras.",
+      "nota_de_confianca": "Os fatos da linha do tempo (quantidade, datas, atrofia, custo, citação do ecólogo) foram verificados direto na fonte (A Crítica) e são apresentados com confiança. Removida uma afirmação anterior de que o trecho com palmeiras 'aumentou a temperatura local' — vinha de um artigo acadêmico cujo PDF estava bloqueado (só aparecia em resumo de busca), e essa afirmação seria correlação (outros fatores concorrentes, sem grupo de controle) apresentada como se fosse causalidade medida. O caso continua válido como estudo de mecanismo (por que palmeira não dá sombra nem evapotranspiração) e como falha de manejo (atrofia/remoção) — só não afirma um número de temperatura causado pelas palmeiras.",
+      "conexao_com_o_projeto": "Complementa o efeito-halo da floresta (seção 05 do artefato de big numbers): se proximidade de floresta de verdade esfria mensuravelmente uma célula de 1 km², faz sentido que a ESPÉCIE escolhida pra arborização de rua importe — uma avenida cheia de palmeira não entrega o mesmo serviço ecológico que uma cheia de árvore de copa larga, mesmo com o mesmo número de 'árvores' plantadas.",
+      "fontes": [
+        { "titulo": "Palmeiras 'são condenadas' pela má gestão em Manaus — A Crítica", "url": "https://www.acritica.com/palmeiras-s-o-condenadas-pela-ma-gest-o-em-manaus-1.130988", "verificado_por": "fetch_direto" },
+        { "titulo": "Projetadas na gestão de Arthur Virgílio, árvores ipês em avenidas de Manaus florescem há sete anos — Revista Cenarium", "url": "https://revistacenarium.com.br/projetadas-na-gestao-de-arthur-virgilio-arvores-ipes-em-avenidas-de-manaus-florescem-ha-sete-anos/", "verificado_por": "busca" },
+        { "titulo": "Pouca arborização agrava as ilhas de calor — A Crítica", "url": "https://www.acritica.com/manaus/pouca-arborizac-o-agrava-as-ilhas-de-calor-1.413033", "verificado_por": "busca" }
+      ]
+    }
+  ]
+}

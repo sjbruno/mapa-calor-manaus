@@ -21,3 +21,11 @@ credentials.json
 
 # Lixo do macOS
 .DS_Store
+
+# Documentos de planejamento/processo pessoais — não fazem parte do projeto
+# público (metodologia e código ficam no README.md e no Claude-INSTRUCTIONS.md).
+ESTUDO.md
+STORYTELLING.md
+plano.html
+refs-visuais.rtf
+hero-manaus.gif

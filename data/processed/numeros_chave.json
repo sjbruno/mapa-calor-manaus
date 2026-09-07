@@ -1,0 +1,136 @@
+{
+  "_sobre": "Big numbers levantados a partir dos dados processados (LST corrigida de deriva orbital + NDVI), pra embasar o conteúdo/narrativa do site. O texto do site é escrito em cima destes números; não inventar novo número sem recalcular contra os dados. Versão consolidada em 06/09/2026 (todos os números com absoluto + percentual).",
+  "numeros": [
+    {
+      "id": "amplitude_termica_diurna",
+      "titulo": "11,3°C de diferença entre o ponto mais quente e o mais frio de Manaus",
+      "valor_absoluto": 11.30, "unidade_absoluta": "°C",
+      "valor_percentual": 44.1, "unidade_percentual": "% (relativo ao ponto mais frio)",
+      "como_foi_calculado": "Média histórica (2001-2025, lst_dia_c_corrigido) de cada uma das 2.040 células da grade; célula mais quente menos célula mais fria, entre as que têm pelo menos 200 de 300 meses com dado válido (1.916 de 2.040 células qualificam).",
+      "detalhe": {
+        "celula_mais_quente": { "media_c": 36.92, "lon": -59.976, "lat": -3.120 },
+        "celula_mais_fria": { "media_c": 25.62, "lon": -59.769, "lat": -3.066, "obs": "~21 km da Reserva Ducke — é área de floresta, mas não é o ponto da reserva citado no estudo da UEA." }
+      },
+      "validacao": "Célula mais quente ficou entre 35,3°C e 38,5°C em TODOS os 25 anos — não é pico de um ano isolado, é um ponto de calor persistente."
+    },
+    {
+      "id": "amplitude_termica_diurna_pontos_referencia",
+      "titulo": "8,8°C entre Reserva Ducke e o bairro mais quente do estudo da UEA",
+      "valor_absoluto": 8.79, "unidade_absoluta": "°C",
+      "valor_percentual": 31.5, "unidade_percentual": "% (relativo à Reserva Ducke)",
+      "como_foi_calculado": "Média histórica (2001-2025) de lst_dia_c na célula mais próxima de cada PONTO_REFERENCIA do config.py: reserva_ducke (27,94°C) vs. petropolis (36,73°C).",
+      "detalhe": { "reserva_ducke_c": 27.94, "petropolis_c": 36.73,
+        "outros_pontos_c": { "centro": 33.04, "aleixo": 35.66, "cidade_nova": 35.11, "japiim": 36.60, "ponta_negra": 27.97 } },
+      "nota": "Mais citável (bairro com nome, validado contra a UEA); o número de 11,3°C acima é o extremo real, mais impactante mas sem nome de bairro."
+    },
+    {
+      "id": "amplitude_termica_noturna",
+      "titulo": "Amplitude térmica noturna é bem mais modesta que a diurna",
+      "valor_absoluto": 4.31, "unidade_absoluta": "°C",
+      "valor_percentual": 18.3, "unidade_percentual": "% (relativo à célula noturna mais fria)",
+      "como_foi_calculado": "Mesmo método da amplitude diurna, em lst_noite_c_corrigido, limiar de completude >= 100 de 300 meses (1.387 de 2.040 células qualificam).",
+      "nota": "TRATAR COM CAUTELA — completude de dado noturno é baixa (~37% no geral); o número muda de 2,7°C a 4,8°C conforme o limiar de completude exigido. Usar como contraste narrativo (\"de noite as diferenças diminuem\"), não como número duro."
+    },
+    {
+      "id": "tendencia_temporal_bbox",
+      "titulo": "A cidade inteira está mais quente que em 2001",
+      "valor_absoluto": 0.937, "unidade_absoluta": "°C (2001-05 -> 2021-25)",
+      "valor_percentual": 3.28, "unidade_percentual": "%",
+      "taxa_anual": { "valor": 0.0475, "unidade": "°C/ano" },
+      "como_foi_calculado": "Bbox inteiro (floresta+cidade). Média 2001-2005 = 28,605°C; média 2021-2025 = 29,542°C. lst_dia_c_corrigido (já sem o viés da deriva orbital).",
+      "series_por_grupo": {
+        "bbox_inteiro": { "ini": 28.605, "fim": 29.542, "abs": 0.937, "pct": 3.28, "taxa_ano": 0.0475 },
+        "urbanizada_ndvi_menor_0_5": { "ini": 32.875, "fim": 33.642, "abs": 0.767, "pct": 2.33, "taxa_ano": 0.0413, "n_celulas": 214 },
+        "verde_ndvi_maior_igual_0_5": { "ini": 28.480, "fim": 29.378, "abs": 0.898, "pct": 3.15, "taxa_ano": 0.0460, "n_celulas": 1559 }
+      },
+      "nota": "Achado honesto: o ritmo de aquecimento é PARECIDO entre área urbanizada e área verde na escala da cidade inteira (0,041-0,047°C/ano) — sugere que boa parte da subida é regional (seca/El Niño), não só efeito local de perda de vegetação. O efeito local concentrado está no hotspot (ver 'hotspot_cidade_nova')."
+    },
+    {
+      "id": "perda_vegetacao",
+      "titulo": "A floresta ao redor se manteve estável; a mancha urbana perdeu 11% de vegetação",
+      "valor_absoluto": -0.0469, "unidade_absoluta": "pontos de NDVI (2001-05 -> 2021-25)",
+      "valor_percentual": -11.04, "unidade_percentual": "%",
+      "taxa_anual_percentual": -0.495,
+      "como_foi_calculado": "214 células com NDVI médio histórico < 0,5 ('urbanizadas'): 0,4248 (2001-05) -> 0,3779 (2021-25).",
+      "comparacao_bbox_inteiro": { "valor_percentual": -0.12, "taxa_anual_percentual": 0.029, "nota": "Praticamente estável — a floresta domina a média do bbox e disfarça a perda urbana. Não usar para falar de desmatamento." }
+    },
+    {
+      "id": "area_verde_convertida_km2",
+      "titulo": "57 km² de Manaus deixaram de ser área verde em 25 anos",
+      "valor_absoluto": 57, "unidade_absoluta": "km² (1 célula da grade = 1 km²)",
+      "valor_percentual": 3.60, "unidade_percentual": "% da área verde que existia em 2001-05",
+      "como_foi_calculado": "Classificação de cada célula por NDVI médio (limiar 0,5) em 'verde' ou 'urbano', comparando a janela 2001-05 com 2021-25. 1.585 km² eram 'verdes' em 2001-05; 57 km² desses viraram 'urbanos' até 2021-25. Em paralelo, 19 km² fizeram o caminho oposto (urbano -> verde, possível recomposição/ruído) e 169 km² já eram urbanos e continuaram assim.",
+      "detalhe_transicoes_km2": { "verde_permaneceu_verde": 1528, "verde_virou_urbano": 57, "urbano_virou_verde": 19, "urbano_permaneceu_urbano": 169 },
+      "nota": "Big number de escala 'de Manaus em geral' — mais tangível que percentual de NDVI médio (que dilui a perda porque a floresta ao redor domina a média do bbox). Boa comparação visual: 57 km² é quase o tamanho da Reserva Ducke inteira citada no site."
+    },
+    {
+      "id": "perda_vegetacao_areas_ja_urbanas",
+      "titulo": "Áreas que já eram urbanas em 2001 não pioraram no geral — mas Petrópolis é uma exceção notável",
+      "coorte_ja_urbana": {
+        "titulo": "188 km² que já eram 'urbanos' (NDVI<0,5) em 2001-05",
+        "ndvi_valor_percentual": 0.07,
+        "lst_valor_absoluto": 0.589, "lst_valor_percentual": 1.79,
+        "leitura": "NDVI praticamente não mudou (não tinha muito mais o que perder) mas a temperatura subiu quase igual à média da cidade — reforça que, em área já consolidada, o aquecimento recente é mais regional (seca/El Niño) que causado por nova perda local de vegetação."
+      },
+      "aleixo": { "ndvi_valor_percentual": 3.68, "lst_valor_absoluto": 0.498, "lst_valor_percentual": 1.42, "leitura": "NDVI subiu levemente (possível recomposição pontual); aquecimento em linha com a média da cidade." },
+      "petropolis": { "ndvi_valor_percentual": -21.92, "lst_valor_absoluto": 0.004, "lst_valor_percentual": 0.01, "leitura": "Perdeu 22% do NDVI que ainda tinha — a maior perda proporcional entre os pontos de referência nomeados — mas a temperatura NÃO subiu quase nada no período. Bairro já estava perto do teto de calor local antes de 2001." },
+      "nota_de_redacao": "Não force uma história única aqui — os dois bairros do mesmo estudo da UEA se comportaram de formas opostas (Aleixo estável/aquecimento normal; Petrópolis perdeu bastante verde mas não esquentou mais). Isso é, na verdade, um bom contraponto pro debate: perda de vegetação NUMA área já consolidada nem sempre produz mais calor mensurável — o efeito parece mais forte na FRONTEIRA de expansão (ver 'hotspot_cidade_nova') do que dentro do núcleo já urbanizado."
+    },
+    {
+      "id": "hotspot_cidade_nova",
+      "titulo": "Um lugar específico onde floresta virou calor, ano a ano",
+      "ndvi": { "valor_absoluto": -0.239, "unidade_absoluta": "pontos de NDVI", "valor_percentual": -35.4 },
+      "lst": { "valor_absoluto": 2.902, "unidade_absoluta": "°C", "valor_percentual": 9.42 },
+      "como_foi_calculado": "Regressão linear (NDVI e LST x ano) em cada célula; selecionadas as ~10 células vizinhas com a combinação mais extrema de queda de NDVI + alta de LST ao mesmo tempo (cluster espacialmente coerente). Localização: ~5 km de Cidade Nova, ~7 km da Reserva Ducke — franja de expansão urbana entre a cidade e a floresta.",
+      "serie_temporal": {
+        "ndvi_2001_2005": 0.675, "ndvi_2021_2025": 0.437,
+        "lst_dia_2001_2005_c": 30.813, "lst_dia_2021_2025_c": 33.716
+      },
+      "validacao": "Trajetória suave e monotônica ao longo dos 25 anos nos dois indicadores (não é um salto de um ano só). LST subiu 3x mais rápido aqui que a média da cidade inteira no mesmo período (+2,9°C vs. +0,94°C).",
+      "nota": "Número mais forte pra conectar visualmente 'perda de vegetação' com 'aumento de temperatura' NUM LUGAR SÓ, ao longo do tempo. Só o cluster mais forte foi investigado a fundo — pode haver outros na grade."
+    },
+    {
+      "id": "correlacao_vegetacao_temperatura",
+      "titulo": "A correlação existe, mas é fraca célula a célula — o contraste de grupo é mais confiável",
+      "regressao_todas_celulas": {
+        "n": 1773, "slope_c_por_ponto_percentual_ndvi": -0.01256, "r2": 0.057, "r": -0.239,
+        "leitura": "A cada -1 ponto percentual de NDVI, LST sobe em média +0,0126°C — mas R²=5,7%: direção certa, força fraca. NÃO usar como fórmula precisa."
+      },
+      "contraste_de_grupo": {
+        "celulas_que_perderam_ndvi": { "n": 767, "pct_do_total": 43.3, "media_lst_var_c": 1.091 },
+        "celulas_que_mantiveram_ou_ganharam": { "n": 1006, "pct_do_total": 56.7, "media_lst_var_c": 0.788 },
+        "diferenca_absoluta_c": 0.303, "diferenca_percentual": 38.4,
+        "leitura": "Células que desmataram esquentaram, em média, 38% mais que as que não desmataram. Mais robusto que a regressão acima — usar este como o big number da correlação."
+      },
+      "como_foi_calculado": "Todas as 2.040 células, janela 2001-05 vs. 2021-25 (NDVI e LST), filtradas para as com dado suficiente nas duas janelas (1.773 células).",
+      "nota_de_redacao": "Não afirmar 'a cada X% de perda, Y% de calor' como lei determinística. Combinar: (1) contraste de grupo (+38% mais aquecimento em quem desmata) + (2) o hotspot da Cidade Nova como ilustração do caso extremo (3x a média)."
+    },
+    {
+      "id": "efeito_halo_floresta",
+      "titulo": "Cada km de distância até a floresta custa quase 0,4°C — mesmo entre áreas igualmente urbanizadas",
+      "valor_absoluto": 0.379, "unidade_absoluta": "°C por km de distância até a floresta mais próxima",
+      "valor_percentual": 1.15, "unidade_percentual": "% do valor típico da área urbana, por km",
+      "como_foi_calculado": "34 manchas de floresta contígua identificadas na grade (limiar NDVI médio > 0,78; 1 a 489 km² cada — a maior contém a Reserva Ducke). Pra cada célula, calculada a distância até a célula de floresta mais próxima. Regressão LST_dia_c_corrigido ~ NDVI_próprio + distância_até_floresta, restrita às 214 células 'urbanizadas' (NDVI médio < 0,5) — isolar o efeito de proximidade à floresta do efeito trivial de 'perto da floresta também é mais verde'.",
+      "resultado_regressao": {
+        "so_celulas_urbanas": { "coef_dist_km": 0.379, "erro_padrao": 0.152, "t": 2.49, "n": 214, "significativo": true },
+        "todas_as_celulas_controlando_ndvi_proprio": { "coef_dist_km": 0.114, "erro_padrao": 0.039, "t": 2.89, "n": 1773, "significativo": true, "nota": "menor que o efeito isolado nas urbanas porque aqui o NDVI próprio já absorve boa parte do efeito" }
+      },
+      "traducao_pratica": "Uma célula urbana a ~1 km de uma mancha de floresta é, em média, ~2°C mais fria que uma célula igualmente urbana a ~6 km de qualquer floresta (maior distância observada no estudo: 6,7 km).",
+      "curva_bruta_todas_celulas_km_vs_lst": [
+        {"dist_km_media": 0.5, "lst_media": 28.841, "n": 341},
+        {"dist_km_media": 1.0, "lst_media": 29.016, "n": 207},
+        {"dist_km_media": 2.0, "lst_media": 29.356, "n": 219},
+        {"dist_km_media": 3.0, "lst_media": 30.046, "n": 165},
+        {"dist_km_media": 4.0, "lst_media": 31.330, "n": 152},
+        {"dist_km_media": 5.6, "lst_media": 31.513, "n": 84}
+      ],
+      "reserva_ducke": { "patch_km2": 489, "confirmado": "célula mais próxima do ponto PONTOS_REFERENCIA.reserva_ducke pertence a esta mancha — a maior da grade." },
+      "tamanho_da_mancha_importa": {
+        "testado": true, "coef_interacao_dist_x_log_tamanho": -0.0139, "t": -1.33, "significativo": false,
+        "leitura": "Sinal na direção esperada (mancha maior = queda mais suave com a distância, ou seja, 'alcance' maior), mas SEM significância estatística — não vira número citável tipo 'por km²'. Registrado como achado sugestivo, não confirmado."
+      },
+      "limitacao_importante": "Nenhuma célula do estudo está a mais de 6,7 km de alguma mancha de floresta (a malha urbana de Manaus é pontilhada de fragmentos florestais) — não dá pra saber se/onde o efeito satura além disso. Não usar como 'raio de influência máximo comprovado'.",
+      "nota_de_redacao": "Não afirmar '1 km² de verde melhora X% num raio de Y metros' — os dados não sustentam essa precisão (a relação com o tamanho da mancha não é significativa). Usar a forma testada e significativa: 'cada km de distância até a floresta custa ~0,4°C, mesmo entre áreas igualmente construídas' — e contrastar com o hotspot da Cidade Nova (~7 km de Ducke) como ilustração do extremo."
+    }
+  ]
+}

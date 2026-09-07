@@ -39,11 +39,12 @@ BBOX = [-60.20, -3.20, -59.75, -2.85]
 
 # Resolução da grade de análise, em metros.
 # 1000 m = resolução nativa do MOD11A2 (temperatura). O NDVI, que vem em 250 m,
-# é agregado para cá — ver Fase 4 do plano.
+# é agregado para cá — ver 04_ndvi_mensal.py.
 RESOLUCAO_M = 1000
 
-# Resolução nativa do MOD13Q1 (NDVI) — usada como `scale` no reduceRegions da
-# Fase 4, pra agregação 250 m -> grade de 1 km ser feita na resolução certa.
+# Resolução nativa do MOD13Q1 (NDVI) — usada como `scale` no reduceRegions de
+# 04_ndvi_mensal.py, pra agregação 250 m -> grade de 1 km ser feita na
+# resolução certa.
 RESOLUCAO_NDVI_NATIVA_M = 250
 
 # ---------------------------------------------------------------------------
@@ -69,13 +70,13 @@ COLECAO_LST = "MODIS/061/MOD11A2"
 COLECAO_NDVI = "MODIS/061/MOD13Q1"
 
 # Ocorrência histórica de água — usada para mascarar o Rio Negro.
-# Sem isso o rio (NDVI negativo) seria lido como "área degradada". Ver Fase 4.
+# Sem isso o rio (NDVI negativo) seria lido como "área degradada". Ver 04_ndvi_mensal.py.
 COLECAO_AGUA = "JRC/GSW1_4/GlobalSurfaceWater"
 # Banda "occurrence": % das vezes em que aquele pixel foi água entre 1984 e 2021.
 # 100 = sempre água (leito do rio); 0 = nunca.
 BANDA_AGUA = "occurrence"
 
-# Limiar decidido olhando a distribuição real de occurrence no bbox (Fase 4):
+# Limiar decidido olhando a distribuição real de occurrence no bbox:
 # o histograma é fortemente bimodal — a grande maioria dos pixels com QUALQUER
 # valor de occurrence está entre 90-100 (leito permanente do rio), com uma
 # cauda pequena de pixels "molhados às vezes" nas faixas mais baixas. 50 separa
@@ -117,12 +118,13 @@ DIR_SITE = RAIZ / "site"
 # ---------------------------------------------------------------------------
 # 6. PONTOS DE REFERÊNCIA PARA VALIDAÇÃO
 # ---------------------------------------------------------------------------
-# Coordenadas (latitude, longitude) usadas na Fase 7 para checar se o pipeline
-# reproduz padrões que a literatura já descreveu.
+# Coordenadas (latitude, longitude) usadas para checar se o pipeline
+# reproduz padrões que a literatura já descreveu (validação em
+# 04_ndvi_mensal.py).
 #
 # ATENÇÃO: estas coordenadas são APROXIMADAS — centroides estimados, não
-# oficiais. Antes de usá-las como prova de qualquer coisa na Fase 7, elas
-# precisam ser conferidas num mapa. Estão aqui como ponto de partida.
+# oficiais. Antes de usá-las como prova de qualquer coisa, elas precisam
+# ser conferidas num mapa. Estão aqui como ponto de partida.
 PONTOS_REFERENCIA = {
     # Deve ser o mais FRIO e mais VERDE — floresta preservada.
     "reserva_ducke": (-2.960, -59.930),
@@ -138,7 +140,7 @@ PONTOS_REFERENCIA = {
 }
 
 # ---------------------------------------------------------------------------
-# 7. FAIXAS PLAUSÍVEIS (usadas nas checagens de sanidade da Fase 5)
+# 7. FAIXAS PLAUSÍVEIS (usadas nas checagens de sanidade de 05_montar_tabelas.py)
 # ---------------------------------------------------------------------------
 # Qualquer valor fora destas faixas indica erro de processamento, não um dado
 # interessante. Manaus não faz 5 °C nem 80 °C de superfície.
@@ -151,7 +153,7 @@ NDVI_MIN, NDVI_MAX = -1.0, 1.0
 # e mês. Cidade equatorial, sol forte o ano todo — o normal é o dia ser mais
 # quente (mediana histórica: +5,6 °C). Uma inversão pequena (1-3 °C) é
 # plausível num mês de chuva muito pesada (o dia fica encoberto o mês
-# inteiro); acima de 5 °C, olhando a distribuição real dos dados (Fase 5),
+# inteiro); acima de 5 °C, olhando a distribuição real dos dados,
 # é sempre a leitura diurna que está fora do normal, nunca a noturna —
 # resíduo de nuvem que passou pelo QC, não um evento climático.
 LIMIAR_INVERSAO_NOITE_DIA_C = 5.0
@@ -172,6 +174,6 @@ LIMIAR_Z_CLIMATOLOGICO = 4.0
 # ---------------------------------------------------------------------------
 # 8. EARTH ENGINE — SEU PROJETO
 # ---------------------------------------------------------------------------
-# Preencha na Fase 2, depois de criar o projeto no Google Cloud e registrá-lo
-# como noncommercial. É uma string tipo "ee-seunome" ou "meu-projeto-123456".
+# Preencha depois de criar o projeto no Google Cloud e registrá-lo como
+# noncommercial. É uma string tipo "ee-seunome" ou "meu-projeto-123456".
 EE_PROJECT_ID = "mapa-amazonia"

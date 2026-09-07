@@ -1,7 +1,7 @@
 """
-Fase 5b (conclusão) — aplicar a correção de deriva orbital
+Aplica a correção de deriva orbital à LST.
 
-Junta as duas pontas medidas nesta fase:
+Junta as duas pontas medidas anteriormente:
   - a hora real de passagem do satélite, por mês (06_deriva_orbital.py);
   - a curva horária real de temperatura do ar em Manaus (07_curva_horaria_ar.py).
 
@@ -13,7 +13,7 @@ horário de referência histórico — sem sobrescrever os valores originais.
 lado com as originais, pra o site poder alternar entre os dois (correção
 ligada por padrão, com opção de desligar).
 
-Metodologia completa, com todos os números, em ESTUDO.md (Fase 5b) e em
+Metodologia completa, com todos os números, em
 `data/processed/criterios_limpeza.json` (entrada `deriva_orbital_terra`).
 """
 
@@ -22,7 +22,7 @@ import pandas as pd
 
 from mapa_amazonia.config import ANO_FIM, ANO_INICIO, DIR_PROCESSED
 
-# Último ano antes da deriva orbital do Terra começar (Fase 5b) — usado
+# Último ano antes da deriva orbital do Terra começar — usado
 # como "horário de referência" pra corrigir os anos seguintes.
 ANO_REFERENCIA_FIM = 2020
 

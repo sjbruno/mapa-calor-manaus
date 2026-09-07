@@ -1,5 +1,5 @@
 """
-Fase 3 — Temperatura mensal, 2001-2025
+Temperatura de superfície (LST) mensal, 2001-2025.
 
 Constrói uma tabela com a temperatura de superfície média — dia e noite,
 separadas — de cada célula da grade de 1 km, para cada um dos 300 meses
@@ -9,9 +9,8 @@ fato, por isso ele fica esperando e checando o status da task).
 
 Por que guardar dia E noite: a LST noturna é a melhor métrica de ilha de
 calor urbana (mede o quanto o concreto retém calor acumulado ao longo do
-dia); a diurna é mais dramática visualmente. O brief do projeto não decidiu
-qual usar — a decisão tomada aqui é guardar as duas e escolher na
-visualização, mais adiante.
+dia); a diurna é mais dramática visualmente. As duas ficam salvas, e a
+escolha de qual usar é feita na visualização.
 """
 
 import time
@@ -124,20 +123,20 @@ def construir_tabela_completa(
     return ee.FeatureCollection(lista_de_tabelas).flatten()
 
 
-def validar_contra_fase_2(grade: ee.FeatureCollection, regiao: ee.Geometry) -> None:
+def validar_contra_calculo_unico(grade: ee.FeatureCollection, regiao: ee.Geometry) -> None:
     """
     Checagem de sanidade antes de gastar cota rodando os 300 meses: refaz
     só julho de 2020 pela grade (célula a célula, depois em média) e
-    compara com o número da Fase 2 (29.41 °C, tirado numa única reduceRegion
-    sobre o bbox inteiro). Não precisam bater exatamente — a grade
-    discretiza o bbox em retângulos de 1 km, então há uma pequena diferença
-    de arredondamento esperada nas bordas — mas devem ficar próximos.
+    compara com o valor obtido calculando o bbox inteiro de uma vez
+    (29.41 °C). Não precisam bater exatamente — a grade discretiza o bbox
+    em retângulos de 1 km, então há uma pequena diferença de arredondamento
+    esperada nas bordas — mas devem ficar próximos.
     """
     tabela_julho_2020 = tabela_do_mes(ee.Date("2020-07-01"), grade, regiao)
     media_dia = tabela_julho_2020.aggregate_mean("LST_Day_1km").getInfo()
     print(
         f"Validação — média por grade em julho/2020: {media_dia:.2f} °C "
-        f"(Fase 2, bbox inteiro de uma vez: 29.41 °C)"
+        f"(bbox inteiro de uma vez: 29.41 °C)"
     )
 
 
@@ -179,14 +178,14 @@ def main() -> None:
     grade = construir_grade()
     print(f"Células na grade: {grade.size().getInfo()}")
 
-    validar_contra_fase_2(grade, regiao)
+    validar_contra_calculo_unico(grade, regiao)
 
     tabela = construir_tabela_completa(grade, regiao)
     tarefa = exportar(tabela)
     print(f"Task iniciada: {tarefa.id}")
     print(f"Vai cair no Google Drive (raiz) como '{NOME_ARQUIVO}.csv' quando terminar.")
     acompanhar(tarefa)
-    print(f"Concluído. Baixe '{NOME_ARQUIVO}.csv' do Drive para {DIR_RAW}/ antes da Fase 5.")
+    print(f"Concluído. Baixe '{NOME_ARQUIVO}.csv' do Drive para {DIR_RAW}/ antes de rodar 05_montar_tabelas.py.")
 
 
 if __name__ == "__main__":

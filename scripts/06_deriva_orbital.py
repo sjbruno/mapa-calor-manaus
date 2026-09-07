@@ -1,22 +1,20 @@
 """
-Fase 5b — Deriva orbital do Terra: medir com dado direto do satélite
+Deriva orbital do Terra: medir com dado direto do satélite.
 
-O double-check da Fase 5 encontrou 2025 anomalamente frio em `lst_dia_c`
-(sem explicação de nuvem — a completude de dado está ótima) e levantou uma
-hipótese pesquisando fora do pipeline: a NASA documenta que o satélite Terra
-vem passando cada vez mais cedo sobre o equador desde 2020 (deriva orbital,
-sem mais manobras de correção porque a missão está no fim). Passagem mais
-cedo fotografa a superfície antes dela esquentar — viés de frio, crescente
-com o tempo.
+Uma checagem de sanidade nos dados de LST encontrou 2025 anomalamente frio
+em `lst_dia_c` (sem explicação de nuvem — a completude de dado está ótima).
+A explicação: a NASA documenta que o satélite Terra vem passando cada vez
+mais cedo sobre o equador desde 2020 (deriva orbital, sem mais manobras de
+correção porque a missão está no fim). Passagem mais cedo fotografa a
+superfície antes dela esquentar — viés de frio, crescente com o tempo.
 
 Este script confirma isso com dado do próprio satélite, não por coincidência
-de datas: o MOD11A2 (mesmo produto da Fase 3) já vem com uma banda chamada
-`Day_view_time` — o horário local em que cada pixel foi medido. Só nunca
-tínhamos lido essa banda até agora.
+de datas: o MOD11A2 (mesmo produto de 03_lst_mensal.py) já vem com uma banda
+chamada `Day_view_time` — o horário local em que cada pixel foi medido.
 
-Diferente da Fase 3/4, isso não precisa da grade de 1 km nem de exportação
-assíncrona pro Drive: é só a média do bbox inteiro, por mês — 300 números,
-não 612 mil linhas. Cabe num `.getInfo()` só, síncrono.
+Diferente dos scripts de LST/NDVI, isso não precisa da grade de 1 km nem de
+exportação assíncrona pro Drive: é só a média do bbox inteiro, por mês — 300
+números, não 612 mil linhas. Cabe num `.getInfo()` só, síncrono.
 """
 
 import ee
@@ -38,9 +36,9 @@ ESCALA_HORA = 0.1
 
 
 def _mascarar_por_qc(imagem: ee.Image, banda_dado: str, banda_qc: str) -> ee.Image:
-    """Mesma regra de QC da Fase 3 (`03_lst_mensal.py`) — reaproveitada
-    aqui porque o horário de um pixel só importa se aquele pixel também
-    tiver LST válida (senão não entrou na média que queremos explicar)."""
+    """Mesma regra de QC de `03_lst_mensal.py` — reaproveitada aqui porque
+    o horário de um pixel só importa se aquele pixel também tiver LST
+    válida (senão não entrou na média que queremos explicar)."""
     qc = imagem.select(banda_qc)
     lst_foi_produzida = qc.bitwiseAnd(3).lt(2)
     return imagem.select(banda_dado).updateMask(lst_foi_produzida)
@@ -49,8 +47,8 @@ def _mascarar_por_qc(imagem: ee.Image, banda_dado: str, banda_qc: str) -> ee.Ima
 def horario_medio_do_mes(data_inicio: ee.Date, regiao: ee.Geometry) -> ee.Feature:
     """
     Horário médio (hora decimal) de passagem de dia e de noite sobre o bbox
-    inteiro, naquele mês — mesma máscara de QC da Fase 3, mesma composição
-    mensal (`.mean()` das composições de 8 dias). `reduceRegion` (não
+    inteiro, naquele mês — mesma máscara de QC de 03_lst_mensal.py, mesma
+    composição mensal (`.mean()` das composições de 8 dias). `reduceRegion` (não
     `reduceRegions`): não precisamos de uma linha por célula aqui, só um
     número por mês pro bbox inteiro.
     """

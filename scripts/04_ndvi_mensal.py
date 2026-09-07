@@ -1,10 +1,10 @@
 """
-Fase 4 — NDVI mensal, na mesma grade
+NDVI (índice de vegetação) mensal, na mesma grade da LST.
 
 Constrói a camada de vegetação: NDVI médio mensal por célula da grade de
-1 km, 2001-2025 — mesma grade, mesmos cell_id da Fase 3 (LST), pra que o
-cruzamento temperatura×vegetação seja um join simples por célula (decisão
-da v1). Estrutura do script é deliberadamente paralela à da Fase 3.
+1 km, 2001-2025 — mesma grade, mesmos cell_id de 03_lst_mensal.py, pra que
+o cruzamento temperatura×vegetação seja um join simples por célula.
+Estrutura do script é deliberadamente paralela à de 03_lst_mensal.py.
 """
 
 import time
@@ -47,13 +47,13 @@ def construir_mascara_agua(regiao: ee.Geometry) -> ee.Image:
 
 def mascarar_composicao(imagem: ee.Image, e_agua: ee.Image) -> ee.Image:
     """
-    SummaryQA do MOD13Q1 é bem mais simples que o QC bit a bit da Fase 3:
+    SummaryQA do MOD13Q1 é bem mais simples que o QC bit a bit de 03_lst_mensal.py:
     já vem como um número pequeno direto (0=ótimo, 1=bom, 2=nuvem/neve,
     3=inválido) — não precisa de bitwiseAnd, só comparar.
 
     A conversão de escala (NDVI vem como inteiro; 8000 = 0.8) acontece aqui,
-    antes de aplicar as máscaras — mesma lógica da Fase 3: fazer a conversão
-    uma vez só, num lugar central, com a constante do config.py.
+    antes de aplicar as máscaras — mesma lógica de 03_lst_mensal.py: fazer a
+    conversão uma vez só, num lugar central, com a constante do config.py.
     """
     qualidade_ok = imagem.select("SummaryQA").lte(1)
     ndvi = imagem.select("NDVI").multiply(ESCALA_NDVI)
@@ -64,7 +64,7 @@ def construir_imagem_mensal(
     data_inicio: ee.Date, regiao: ee.Geometry, e_agua: ee.Image
 ) -> ee.Image:
     """
-    Mesma ideia da Fase 3, com MOD13Q1 (composições de 16 dias, não 8) —
+    Mesma ideia de 03_lst_mensal.py, com MOD13Q1 (composições de 16 dias, não 8) —
     um mês normal contém ~2 composições. `.mean()` colapsa as que caírem no
     mês numa imagem só; pixels mascarados (nuvem, água) não entram na média.
     """
@@ -90,10 +90,11 @@ def tabela_do_mes(
 
     `.setOutputs(["NDVI"])`: por padrão, quando a imagem de entrada tem uma
     banda só, `reduceRegions` nomeia a coluna de saída pelo **redutor**
-    ("mean"), não pela banda — diferente da Fase 3, onde a imagem tinha 2
-    bandas (LST_Day_1km, LST_Night_1km) e cada uma virou sua própria coluna
-    automaticamente. `setOutputs` força o nome da coluna, pra não depender
-    dessa diferença de comportamento entre imagem de 1 banda e de várias.
+    ("mean"), não pela banda — diferente de 03_lst_mensal.py, onde a imagem
+    tinha 2 bandas (LST_Day_1km, LST_Night_1km) e cada uma virou sua própria
+    coluna automaticamente. `setOutputs` força o nome da coluna, pra não
+    depender dessa diferença de comportamento entre imagem de 1 banda e de
+    várias.
     """
     imagem = construir_imagem_mensal(data_inicio, regiao, e_agua)
     tabela = imagem.reduceRegions(
@@ -124,8 +125,8 @@ def validar(grade: ee.FeatureCollection, regiao: ee.Geometry, e_agua: ee.Image) 
     """
     Checagem de sanidade antes de exportar os 300 meses: uma célula sobre a
     Reserva Ducke (floresta preservada) deve dar NDVI alto (~0.85); uma sobre
-    o Centro deve dar bem mais baixo (~0.3 ou menos) — exatamente o critério
-    de pronto do plano. Usa os PONTOS_REFERENCIA já definidos no config.py.
+    o Centro deve dar bem mais baixo (~0.3 ou menos). Usa os
+    PONTOS_REFERENCIA já definidos no config.py.
     """
     from mapa_amazonia.config import PONTOS_REFERENCIA
 

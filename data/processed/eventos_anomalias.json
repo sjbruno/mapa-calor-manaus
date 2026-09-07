@@ -1,5 +1,5 @@
 {
-  "_sobre": "Catálogo de eventos climáticos/técnicos reais usados para explicar anomalias e outliers nos dados de temperatura (LST) e nível de água do bbox de Manaus. Gerado na Fase 5 (double-check de anomalias, 06/09/2026). Cada evento tem um período (ano/mês), o efeito esperado nos dados, e as fontes usadas para confirmar. Pensado para a Fase 6 citar como referência ao lado de anomalias no gráfico/mapa.",
+  "_sobre": "Catálogo de eventos climáticos/técnicos reais usados para explicar anomalias e outliers nos dados de temperatura (LST) e nível de água do bbox de Manaus. Cada evento tem um período (ano/mês), o efeito esperado nos dados, e as fontes usadas para confirmar. Pensado para o site citar como referência ao lado de anomalias no gráfico/mapa.",
   "eventos": [
     {
       "id": "friagem_2001_06",
@@ -8,8 +8,8 @@
       "titulo": "Friagem de junho/2001",
       "resumo": "Incursão de massa de ar frio (friagem) causou recorde de frio em Manaus. O mês teve 0% de leitura noturna válida de LST em toda a grade (nenhum outro junho em 25 anos chega perto) e completude diurna caiu para 86,7% — consistente com céu encoberto por período prolongado.",
       "efeito_nos_dados": "lst_dia_c com pico espúrio de até 42,01°C em ~30 células vizinhas (poucos pixels de dia sobrando num mês excepcionalmente nublado); filtrado em 05_montar_tabelas.py (filtrar_anomalias_climatologicas).",
-      "verificado_por": "usuario",
-      "nota_verificacao": "O recorde de frio em junho/2001 foi levantado pelo próprio usuário (Bruno) em pesquisa própria, fora deste pipeline. Não encontrei uma fonte com URL que documente especificamente essa data ao pesquisar — só contexto geral de que friagens são recorrentes na região. Não citar como 'fonte verificada' até ter um link concreto.",
+      "verificado_por": "relato_nao_documentado",
+      "nota_verificacao": "O recorde de frio em junho/2001 é conhecido localmente, mas não foi encontrada uma fonte com URL que documente especificamente essa data — só contexto geral de que friagens são recorrentes na região. Não citar como 'fonte verificada' até ter um link concreto.",
       "fontes": [
         {
           "titulo": "As incursões de ar frio no Estado do Amazonas (dissertação, UFAM)",
