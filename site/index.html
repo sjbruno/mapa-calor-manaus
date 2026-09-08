@@ -204,6 +204,45 @@
   .heatmap-zoom button:first-child{ border-bottom:1px solid rgba(255,255,255,.15); }
   .swatch{ width:10px; height:10px; border-radius:3px; display:inline-block; }
 
+  /* ================= CITAÇÕES: marcador clicável + overlay com a fonte ================= */
+  .cite{
+    display:inline; vertical-align:top; position:relative; top:-.2em;
+    font-size:9px; line-height:1; border:none; background:none;
+    color:var(--ink-mute); cursor:pointer; padding:0 1px;
+    font-family:"Work Sans",sans-serif; font-weight:700;
+    opacity:.8; transition:opacity .15s, color .15s;
+  }
+  .cite:hover, .cite:focus-visible{ opacity:1; color:var(--a-3); }
+  .cite.on-dark{ color:rgba(245,241,232,.85); }
+  .cite.on-dark:hover, .cite.on-dark:focus-visible{ color:#fff; }
+  .cite::before{ content:"[i]"; }
+
+  .cite-overlay{ position:fixed; inset:0; z-index:50; display:none; align-items:center; justify-content:center; padding:1.2rem; }
+  .cite-overlay.visivel{ display:flex; }
+  .cite-overlay-backdrop{ position:absolute; inset:0; background:rgba(10,9,7,.6); backdrop-filter:blur(2px); opacity:0; transition:opacity .2s ease; }
+  .cite-card{
+    position:relative; max-width:440px; width:100%; background:var(--paper); color:var(--ink);
+    border-radius:12px; padding:1.6rem 1.7rem 1.8rem; box-shadow:0 20px 60px rgba(0,0,0,.4);
+    opacity:0; transform:translateY(10px) scale(.98); transition:opacity .2s ease, transform .2s ease;
+  }
+  .cite-overlay.aberto .cite-overlay-backdrop{ opacity:1; }
+  .cite-overlay.aberto .cite-card{ opacity:1; transform:translateY(0) scale(1); }
+  .cite-close{
+    position:absolute; top:.9rem; right:.9rem; width:28px; height:28px; border-radius:50%;
+    border:none; background:var(--paper-line); color:var(--ink-soft); font-size:1.1rem;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+  .cite-close:hover{ background:var(--ink-mute); color:var(--paper); }
+  .cite-tipo{ font-family:"Work Sans",sans-serif; font-size:.7rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--a-3); margin-bottom:.4rem; }
+  .cite-card h4{ font-family:"Fraunces",serif; font-size:1.15rem; font-weight:600; margin:0 0 .6rem; line-height:1.3; padding-right:1.5rem; }
+  .cite-card p{ font-size:.9rem; color:var(--ink-soft); line-height:1.55; margin:0; }
+  .cite-card a.cite-link{
+    display:inline-flex; align-items:center; gap:.35em; margin-top:1rem; font-size:.85rem;
+    font-weight:600; color:var(--a-3); text-decoration:none; border-bottom:1px solid currentColor;
+  }
+  .cite-card a.cite-link[hidden]{ display:none; }
+  .cite-card a.cite-link::after{ content:"→"; }
+
   /* ================= QUESTIONS: sanfona, colapsada por padrao ================= */
   .qlist{ display:flex; flex-direction:column; margin:1.8rem auto 0; max-width:56ch; }
   .qcard{ border-bottom:1px solid var(--paper-line); padding:1.1rem 0; }
@@ -237,7 +276,7 @@
     <div class="hero-overlay">
       <div class="hero-year" id="hero-year">2001</div>
       <div class="hero-temp"><b id="hero-temp-num">32,6</b>°C
-        <span class="hero-temp-label">Temperatura máxima média na superfície da cidade</span>
+        <span class="hero-temp-label">Temperatura máxima média na superfície da cidade<button type="button" class="cite on-dark" data-cite="temp-maxima" aria-label="Ver fonte deste dado"></button></span>
       </div>
     </div>
     <div class="hero-kicker">role para avançar no tempo ↓</div>
@@ -264,7 +303,7 @@
         <span class="therm-dot" style="left:92%"></span>
         <span class="therm-pt therm-pt-l" style="left:8%">27,9°C<b>Adolpho Ducke</b></span>
         <span class="therm-pt therm-pt-r" style="left:92%">36,7°C<b>Petrópolis</b></span>
-        <div class="therm-diff"><span class="num">+8,8°C</span></div>
+        <div class="therm-diff"><span class="num">+8,8°C</span><button type="button" class="cite on-dark" data-cite="amplitude-termica" aria-label="Ver fonte deste dado"></button></div>
       </div>
     </div>
 
@@ -286,7 +325,7 @@
     <div class="tiles">
       <div class="tile accent-2">
         <span class="label">Custo por km</span>
-        <span class="num">+0,38°C</span>
+        <span class="num">+0,38°C<button type="button" class="cite" data-cite="halo-floresta" aria-label="Ver fonte deste dado"></button></span>
         <span class="cap">Isolando as 214 células já urbanizadas. Estatisticamente significativo.</span>
       </div>
       <div class="tile accent-2">
@@ -305,7 +344,7 @@
     <p class="dek">A maior parte da mancha urbana de Manaus já estava consolidada em 2001. Não sobrava vegetação pra perder ali. Mas existe um recorte de espaço e de tempo onde dá pra ver os dois efeitos juntos: Cidade Nova, na divisa entre a cidade e a floresta.</p>
 
     <div class="chart-card">
-      <h3>Cidade Nova: vegetação x temperatura</h3>
+      <h3>Cidade Nova: vegetação x temperatura<button type="button" class="cite" data-cite="hotspot-cidade-nova" aria-label="Ver fonte deste dado"></button></h3>
       <p class="chart-sub">variação % em relação à média de 2001–05 · eixo verde (esquerda) é NDVI, o índice de vegetação calculado por satélite, eixo vermelho (direita) é LST, a temperatura da superfície captada por satélite (diferente da temperatura do ar), cada um na própria escala</p>
       <svg id="chart-hotspot" viewBox="0 0 700 320" role="img" aria-label="NDVI caindo e temperatura subindo em Cidade Nova, 2001 a 2025, cada série na própria escala"></svg>
       <p class="note" style="margin-top:.8rem;font-size:.78rem">Eixo duplo: as duas linhas usam escalas diferentes (cada uma com o próprio máximo, para cima e para baixo), não a mesma régua. Os dois 0% ficam alinhados na grade do meio, então olhe a cor de cada eixo antes de comparar os números.</p>
@@ -324,11 +363,11 @@
       </div>
     </div>
 
-    <h2 style="margin-top:3.6rem">Ilhas de calor: o concreto que não esfria à noite</h2>
-    <p class="dek">Ilha de calor urbana não é força de expressão, é um fenômeno físico bem documentado: asfalto e concreto absorvem radiação solar de dia e devolvem esse calor pro ar bem mais devagar que solo ou vegetação. Sem árvore, não tem evapotranspiração pra resfriar o entorno. Prédios colados uns nos outros bloqueiam o vento que ajudaria a dissipar o calor acumulado. O resultado: a cidade não esfria direito nem de noite, exatamente quando o corpo mais precisa de alívio térmico.</p>
+    <h2 style="margin-top:3.6rem">Ilhas de Calor: o preço do desenvolvimento</h2>
+    <p class="dek">Ilha de calor urbana não é força de expressão, é um fenômeno físico bem documentado: asfalto e concreto absorvem radiação solar de dia e devolvem esse calor pro ar durante mais tempo que solo ou vegetação. Sem árvore, não tem evapotranspiração pra resfriar o entorno. Prédios colados uns nos outros bloqueiam o vento que ajudaria a dissipar o calor acumulado. Resultado: a cidade não tem tempo de esfriar antes do sol da próxima manhã.</p>
 
     <div class="chart-card">
-      <h3>Manaus em 2025, célula a célula</h3>
+      <h3>Manaus em 2025, célula a célula<button type="button" class="cite" data-cite="mapa-2025" aria-label="Ver fonte deste dado"></button></h3>
       <p class="chart-sub">temperatura de superfície diurna, média do ano · arraste pra mover, role o mouse ou use os botões (ou as teclas + e −) pra aproximar</p>
       <div class="heatmap-wrap" id="heatmap-wrap" tabindex="0" role="application" aria-label="Mapa interativo de Manaus: arraste para mover, use as teclas mais e menos para aproximar e afastar">
         <canvas id="chart-heatmap" role="img" aria-label="Mapa da grade de Manaus em 2025: células mais quentes em vermelho, mais frias em verde"></canvas>
@@ -345,13 +384,13 @@
       </div>
     </div>
 
-    <p class="dek">O efeito não é só desconforto. Noite quente atrapalha o sono, o principal mecanismo do corpo pra se recuperar do calor do dia. Estresse térmico sobrecarrega o sistema cardiovascular, principalmente em quem já tem pressão alta ou problema no coração. Quem trabalha na rua, mora em casa sem isolamento térmico ou não tem acesso a ar-condicionado sente esse efeito primeiro e mais forte: a ilha de calor não distribui seu custo de forma igual pela cidade.</p>
+    <p class="dek">O efeito não é só desconforto. Noite quente atrapalha o sono, o principal mecanismo do corpo pra se recuperar da exposição ao calor extremo ao longo do dia. Estresse térmico sobrecarrega o sistema cardiovascular, principalmente em quem já tem pressão alta ou problema no coração. Quem trabalha na rua, mora em casa sem isolamento térmico ou não tem acesso a ar-condicionado sente esse efeito primeiro e mais forte. Ilhas de calor não distribuem seu custo igualmente pela cidade.</p>
   </div>
 </section>
 
 <section class="block sec-4">
   <div class="wrap">
-    <h2>Menos 57 km² de sombra</h2>
+    <h2>Menos 57 km² de sombra<button type="button" class="cite" data-cite="57km2" aria-label="Ver fonte deste dado"></button></h2>
     <p class="dek">Em termos futebolísticos: são quase 8.000 campos de futebol. São 57 km² de Manaus deixaram de ser considerados verdes entre o início e o fim da série (2001 a 2025). É quase o tamanho da própria Reserva Adolpho Ducke: uma reserva inteira perdida em pedaços pela cidade, em apenas uma geração.</p>
 
     <div class="chart-card">
@@ -359,7 +398,7 @@
       <p class="chart-sub">variação de NDVI, o índice de vegetação por satélite (%), vs. variação de temperatura diurna de superfície (°C) · eixo recortado em ±50% para legibilidade</p>
       <svg id="chart-scatter" viewBox="0 0 700 320" role="img" aria-label="Dispersão entre variação de NDVI e variação de temperatura por célula"></svg>
       <div class="legend">
-        <span><i class="swatch" style="background:var(--chart-red)"></i>perdeu vegetação (43%)</span>
+        <span><i class="swatch" style="background:var(--chart-red)"></i>perdeu vegetação (43%)<button type="button" class="cite" data-cite="correlacao-grupo" aria-label="Ver fonte deste dado"></button></span>
         <span><i class="swatch" style="background:var(--chart-green)"></i>manteve/ganhou (57%)</span>
       </div>
     </div>
@@ -375,11 +414,11 @@
     <div class="qlist">
       <details class="qcard">
         <summary>Ainda dá tempo ou já cruzamos o ponto de não retorno?</summary>
-        <p>O maior efeito de vegetação e calor que encontramos está numa área de expansão recente (Cidade Nova). Conter o avanço da cidade sobre a floresta hoje ainda muda o resultado daqui a 20 anos, ou o padrão já está definido demais pra frear? Pro resto do planeta, <a href="https://www.pbs.org/newshour/science/global-warming-will-exceed-1-5-degree-limit-un-says-in-report-that-maps-path-back-below-danger-zone" target="_blank" rel="noopener">já sabemos</a> que 1,5°C já é uma realidade, e agora temos que nos planejar pra <strong>reduzir</strong> os impactos.</p>
+        <p>O maior efeito de vegetação e calor que encontramos está numa área de expansão recente (Cidade Nova)<button type="button" class="cite" data-cite="hotspot-cidade-nova" aria-label="Ver fonte deste dado"></button>. Conter o avanço da cidade sobre a floresta hoje ainda muda o resultado daqui a 20 anos, ou o padrão já está definido demais pra frear? Pro resto do planeta, já sabemos<button type="button" class="cite" data-cite="pbs-15c" aria-label="Ver fonte desta informação"></button> que 1,5°C já é uma realidade, e agora temos que nos planejar pra <strong>reduzir</strong> os impactos.</p>
       </details>
       <details class="qcard">
         <summary>Palmeiras imperiais: urbanismo não é estética, é função</summary>
-        <p>As palmeiras imperiais, que já foram projeto urbanístico na cidade, foram uma escolha visual que não entregou sombra nem resfriamento. Da mesma forma, hoje trocam-se árvores em um bairro com a promessa de serem plantadas em outro, como se fosse uma matemática simples. "É, retirei as árvores de lá, mas plantei em dobro a quilômetros de distância".</p>
+        <p>As palmeiras imperiais, que já foram projeto urbanístico na cidade, foram uma escolha visual que não entregou sombra nem resfriamento<button type="button" class="cite" data-cite="palmeiras-acritica" aria-label="Ver fonte desta informação"></button>. Da mesma forma, hoje trocam-se árvores em um bairro com a promessa de serem plantadas em outro, como se fosse uma matemática simples. "É, retirei as árvores de lá, mas plantei em dobro a quilômetros de distância".</p>
       </details>
       <details class="qcard">
         <summary>BR-319: a solução que nos aproxima do fim?</summary>
@@ -387,7 +426,11 @@
       </details>
       <details class="qcard">
         <summary>A culpa é nossa. Mas quanto?</summary>
-        <p>A cidade inteira esquenta quase no mesmo ritmo que a área verde ao redor, sinal de que parte disso é clima regional (seca, El Niño), e não só Manaus. A cidade é tanto vítima de si quanto do resto do planeta. Mas sem resolver o problema aqui dentro, podemos cobrar solução lá fora?</p>
+        <p>A cidade inteira esquenta quase no mesmo ritmo que a área verde ao redor<button type="button" class="cite" data-cite="tendencia-bbox" aria-label="Ver fonte deste dado"></button>, sinal de que parte disso é clima regional (seca, El Niño), e não só Manaus. A cidade é tanto vítima de si quanto do resto do planeta. Mas sem resolver o problema aqui dentro, podemos cobrar solução lá fora?</p>
+      </details>
+      <details class="qcard">
+        <summary>Ilhas de calor urbano na Amazônia: é possível conciliar o crescimento urbano com a preservação ambiental?</summary>
+        <p>Em outras cidades, sim, mas não por acaso. Nova York<button type="button" class="cite" data-cite="nyc-copa" aria-label="Ver fonte desta informação"></button> e Melbourne<button type="button" class="cite" data-cite="melbourne-copa" aria-label="Ver fonte desta informação"></button> colocam meta numérica de cobertura de copa dentro do próprio plano de crescimento, não como reparo depois que a cidade já foi construída. Mesmo assim não é automático: em Perth, a densificação está vencendo a meta de arborização<button type="button" class="cite" data-cite="perth-densificacao" aria-label="Ver fonte desta informação"></button>, prova de que crescer pra dentro sem cuidado também apaga verde. O padrão de Manaus é outro: a cidade cresce seguindo estrada adentro da floresta<button type="button" class="cite" data-cite="manaus-estrada-floresta" aria-label="Ver fonte deste estudo"></button>, empurrando quem chega para a margem, ameaçando áreas ainda verdes. Os próprios dados aqui mostram isso: a maior parte da perda de vegetação está na fronteira de expansão, não no núcleo já consolidado. A solução não é só ocupar o que já é urbano: é crescer de forma inteligente, equilibrando área verde dentro da cidade e arborizando rua a rua. Dá pra fazer isso em Manaus?</p>
       </details>
     </div>
   </div>
@@ -402,6 +445,122 @@
     </div>
   </div>
 </footer>
+
+<div class="cite-overlay" id="cite-overlay">
+  <div class="cite-overlay-backdrop"></div>
+  <div class="cite-card" role="dialog" aria-modal="true" aria-labelledby="cite-title">
+    <button type="button" class="cite-close" aria-label="Fechar">×</button>
+    <div class="cite-tipo" id="cite-tipo"></div>
+    <h4 id="cite-title"></h4>
+    <p id="cite-corpo"></p>
+    <a class="cite-link" id="cite-link" target="_blank" rel="noopener"></a>
+  </div>
+</div>
+
+<script>
+  // ================= citacoes: marcador clicavel + overlay com a fonte =================
+  // Um registro so de fontes, reaproveitado por marcadores .cite espalhados
+  // pelo site inteiro (data-cite="id"). Delegacao de evento unica no
+  // documento -- nao precisa de listener por marcador.
+  (function(){
+    const CITACOES = {
+      'temp-maxima': {
+        tipo: 'Dado', titulo: 'Temperatura máxima média',
+        corpo: 'Percentil 90 da temperatura de superfície diurna mensal (não a média simples do bbox, que dilui o efeito da mancha urbana), corrigida da deriva orbital do satélite Terra, regressão linear 2001–2025. Produto MODIS MOD11A2, via Google Earth Engine.',
+      },
+      'amplitude-termica': {
+        tipo: 'Dado', titulo: 'Amplitude térmica: Reserva Adolpho Ducke × Petrópolis',
+        corpo: 'Média histórica (2001–2025) de temperatura de superfície diurna na célula mais próxima de cada ponto, produto MODIS MOD11A2. O padrão reproduz o que o estudo da UEA (2002–2012) já havia documentado sobre ilhas de calor em bairros como Petrópolis.',
+      },
+      'halo-floresta': {
+        tipo: 'Dado', titulo: 'Custo por km de distância até a floresta',
+        corpo: 'Regressão de temperatura contra distância até o fragmento de floresta mais próximo, controlando o NDVI da própria célula, restrita às 214 células já urbanizadas — isola o efeito de proximidade do efeito trivial de "perto da mata também é mais verde".',
+      },
+      'hotspot-cidade-nova': {
+        tipo: 'Dado', titulo: 'Hotspot de Cidade Nova',
+        corpo: 'Regressão linear (NDVI e LST por ano) nas ~10 células vizinhas com a combinação mais extrema de queda de vegetação e alta de temperatura simultâneas, 2001–2025, produtos MODIS MOD11A2/MOD13Q1.',
+      },
+      'mapa-2025': {
+        tipo: 'Dado', titulo: 'Mapa de Manaus, célula a célula',
+        corpo: 'Temperatura de superfície diurna, média de 2025, grade de 1 km (2.040 células). Produto MODIS MOD11A2 via Google Earth Engine, corrigido da deriva orbital do satélite Terra.',
+      },
+      '57km2': {
+        tipo: 'Dado', titulo: '57 km² de área verde convertida',
+        corpo: 'Classificação de cada célula da grade por NDVI médio (limiar 0,5) em "verde" ou "urbano", comparando a janela 2001–05 com 2021–25. 1.585 km² eram verdes no início da série; 57 km² viraram urbanos até o fim dela.',
+      },
+      'correlacao-grupo': {
+        tipo: 'Dado', titulo: 'Quem perdeu vegetação esquentou mais',
+        corpo: 'Contraste entre as 767 células que perderam NDVI e as 1.006 que mantiveram ou ganharam, 2001–05 vs. 2021–25 (n=1.773 células com dado suficiente nas duas janelas): as que desmataram esquentaram, em média, 38% mais.',
+      },
+      'tendencia-bbox': {
+        tipo: 'Dado', titulo: 'Ritmo de aquecimento: cidade vs. floresta ao redor',
+        corpo: 'Temperatura diurna média por grupo de células (urbanizadas vs. verdes), 2001–05 vs. 2021–25. O ritmo de aquecimento das duas é parecido (0,041–0,047°C/ano), sinal de que parte da subida é clima regional, não só efeito local da cidade.',
+      },
+      'palmeiras-acritica': {
+        tipo: 'Matéria', titulo: 'Palmeiras "são condenadas" pela má gestão em Manaus',
+        corpo: 'Das 120 palmeiras imperiais plantadas na Av. Djalma Batista em 2004, 98 ficaram atrofiadas e 6 morreram — todas removidas em 2010. Reportagem sobre o manejo malsucedido do plantio.',
+        link: 'https://www.acritica.com/palmeiras-s-o-condenadas-pela-ma-gest-o-em-manaus-1.130988', linkTexto: 'Ler na A Crítica',
+      },
+      'pbs-15c': {
+        tipo: 'Matéria', titulo: 'Aquecimento vai superar 1,5°C, diz relatório da ONU',
+        corpo: 'A ONU já admite que o planeta vai superar o limite de 1,5°C do Acordo de Paris "nos próximos anos" — a estratégia virou reduzir o tempo e a severidade da ultrapassagem, não mais evitá-la por completo.',
+        link: 'https://www.pbs.org/newshour/science/global-warming-will-exceed-1-5-degree-limit-un-says-in-report-that-maps-path-back-below-danger-zone', linkTexto: 'Ler na PBS NewsHour',
+      },
+      'manaus-estrada-floresta': {
+        tipo: 'Estudo', titulo: 'Expansão urbana segue a malha viária',
+        corpo: 'Modelagem do risco de desmatamento na Região Metropolitana de Manaus encontrou o maior risco onde floresta disponível se sobrepõe a uma malha viária em expansão, longe do núcleo urbano já consolidado.',
+        link: 'https://www.sciencedirect.com/science/article/abs/pii/S0301479721023410', linkTexto: 'Ler o estudo',
+      },
+      'nyc-copa': {
+        tipo: 'Política pública', titulo: 'Meta de cobertura de copa de Nova York',
+        corpo: 'Nova York mira 30% de cobertura de copa até 2030, priorizando plantio nos bairros historicamente mais expostos a ilhas de calor — meta de equidade, não só de cobertura total.',
+        link: 'https://comptroller.nyc.gov/reports/new-york-citys-living-infrastructure-funding-and-managing-nycs-urban-forest-and-tree-canopy/', linkTexto: 'Ler o relatório',
+      },
+      'melbourne-copa': {
+        tipo: 'Política pública', titulo: 'Estratégia de floresta urbana de Melbourne',
+        corpo: 'Meta de dobrar a cobertura de copa pública de 22% para 40% até 2040, com pelo menos 3.000 árvores plantadas por ano — meta numérica dentro do próprio plano de crescimento da cidade.',
+        link: 'https://www.melbourne.vic.gov.au/urban-forest-strategy', linkTexto: 'Ler a estratégia',
+      },
+      'perth-densificacao': {
+        tipo: 'Estudo', titulo: 'Densificação x cobertura de copa em Perth',
+        corpo: 'Modelagem de sistemas (Collaborative Conceptual Modelling) encontrou que, nas políticas atuais, a pressão por densidade habitacional está vencendo a meta de arborização — mais densidade, menos copa, mais calor.',
+        link: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6068507/', linkTexto: 'Ler o estudo',
+      },
+    };
+
+    const overlay = document.getElementById('cite-overlay');
+    if(!overlay) return;
+    const tipoEl = document.getElementById('cite-tipo');
+    const tituloEl = document.getElementById('cite-title');
+    const corpoEl = document.getElementById('cite-corpo');
+    const linkEl = document.getElementById('cite-link');
+
+    function abrir(id){
+      const c = CITACOES[id];
+      if(!c) return;
+      tipoEl.textContent = c.tipo;
+      tituloEl.textContent = c.titulo;
+      corpoEl.textContent = c.corpo;
+      if(c.link){ linkEl.href = c.link; linkEl.textContent = c.linkTexto || 'Ver fonte'; linkEl.hidden = false; }
+      else { linkEl.hidden = true; }
+      overlay.classList.add('visivel');
+      requestAnimationFrame(() => requestAnimationFrame(() => overlay.classList.add('aberto')));
+      document.body.style.overflow = 'hidden';
+    }
+    function fechar(){
+      overlay.classList.remove('aberto');
+      document.body.style.overflow = '';
+      setTimeout(() => { overlay.classList.remove('visivel'); }, 200);
+    }
+
+    document.addEventListener('click', (e) => {
+      const gatilho = e.target.closest('.cite');
+      if(gatilho){ abrir(gatilho.dataset.cite); return; }
+      if(e.target.closest('.cite-close') || e.target.classList.contains('cite-overlay-backdrop')){ fechar(); }
+    });
+    document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && overlay.classList.contains('aberto')) fechar(); });
+  })();
+</script>
 
 <script>
 (function(){
