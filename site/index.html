@@ -167,10 +167,41 @@
   .chart-card h3{ margin:0 0 .15rem; font-size:1.08rem; font-weight:600; }
   .chart-card .chart-sub{ font-size:.82rem; color:var(--ink-mute); margin:0 0 .9rem; }
   .chart-card svg{ width:100%; height:auto; display:block; overflow:visible; }
+  .chart-card canvas{ width:100%; height:auto; display:block; border-radius:6px; }
   .chart-card .axis{ font-family:"Work Sans",sans-serif; font-size:10.5px; fill:var(--ink); }
   .chart-card .gridline{ stroke:var(--paper-line); stroke-width:1; }
   .legend{ display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center; margin-top:.6rem; font-size:.8rem; color:var(--ink-soft); }
   .legend span{ display:inline-flex; align-items:center; gap:.4em; }
+  .heatmap-legend{ display:flex; align-items:center; gap:.7rem; margin-top:1rem; font-size:.78rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .heatmap-legend-bar{ flex:1; height:10px; border-radius:5px; display:block; width:100%; }
+
+  .heatmap-wrap{
+    position:relative; width:100%; aspect-ratio:51/40; border-radius:6px;
+    overflow:hidden; cursor:grab; touch-action:none; outline:none;
+  }
+  .heatmap-wrap:focus-visible{ box-shadow:0 0 0 2px var(--a-3); }
+  .chart-card .heatmap-wrap canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .heatmap-labels{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .heatmap-label{
+    position:absolute; transform:translate(-50%,-100%); white-space:nowrap;
+    font-family:"Work Sans",sans-serif; font-size:.7rem; font-weight:600; color:#f5f1e8;
+    text-shadow:0 1px 4px rgba(0,0,0,.7), 0 0 3px rgba(0,0,0,.9); padding-bottom:6px;
+  }
+  .heatmap-label::after{
+    content:""; position:absolute; left:50%; bottom:0; width:5px; height:5px;
+    margin-left:-2.5px; border-radius:50%; background:#f5f1e8; box-shadow:0 0 3px rgba(0,0,0,.8);
+  }
+  .heatmap-zoom{
+    position:absolute; right:.6rem; bottom:.6rem; display:flex; flex-direction:column;
+    border-radius:6px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,.35);
+  }
+  .heatmap-zoom button{
+    width:28px; height:28px; border:none; background:rgba(20,18,16,.75); color:#f5f1e8;
+    font-size:1.1rem; font-family:"Work Sans",sans-serif; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .heatmap-zoom button:hover{ background:rgba(20,18,16,.92); }
+  .heatmap-zoom button:first-child{ border-bottom:1px solid rgba(255,255,255,.15); }
   .swatch{ width:10px; height:10px; border-radius:3px; display:inline-block; }
 
   /* ================= QUESTIONS: sanfona, colapsada por padrao ================= */
@@ -292,6 +323,29 @@
         <span class="cap">Três vezes mais rápido que a média da cidade inteira no mesmo período.</span>
       </div>
     </div>
+
+    <h2 style="margin-top:3.6rem">Ilhas de calor: o concreto que não esfria à noite</h2>
+    <p class="dek">Ilha de calor urbana não é força de expressão, é um fenômeno físico bem documentado: asfalto e concreto absorvem radiação solar de dia e devolvem esse calor pro ar bem mais devagar que solo ou vegetação. Sem árvore, não tem evapotranspiração pra resfriar o entorno. Prédios colados uns nos outros bloqueiam o vento que ajudaria a dissipar o calor acumulado. O resultado: a cidade não esfria direito nem de noite, exatamente quando o corpo mais precisa de alívio térmico.</p>
+
+    <div class="chart-card">
+      <h3>Manaus em 2025, célula a célula</h3>
+      <p class="chart-sub">temperatura de superfície diurna, média do ano · arraste pra mover, role o mouse ou use os botões (ou as teclas + e −) pra aproximar</p>
+      <div class="heatmap-wrap" id="heatmap-wrap" tabindex="0" role="application" aria-label="Mapa interativo de Manaus: arraste para mover, use as teclas mais e menos para aproximar e afastar">
+        <canvas id="chart-heatmap" role="img" aria-label="Mapa da grade de Manaus em 2025: células mais quentes em vermelho, mais frias em verde"></canvas>
+        <div class="heatmap-labels" id="heatmap-labels"></div>
+        <div class="heatmap-zoom">
+          <button type="button" id="heatmap-zoom-in" aria-label="Aproximar">+</button>
+          <button type="button" id="heatmap-zoom-out" aria-label="Afastar">−</button>
+        </div>
+      </div>
+      <div class="heatmap-legend">
+        <span>24,3°C</span>
+        <canvas class="heatmap-legend-bar" id="heatmap-legend-bar" aria-hidden="true"></canvas>
+        <span>39,0°C</span>
+      </div>
+    </div>
+
+    <p class="dek">O efeito não é só desconforto. Noite quente atrapalha o sono, o principal mecanismo do corpo pra se recuperar do calor do dia. Estresse térmico sobrecarrega o sistema cardiovascular, principalmente em quem já tem pressão alta ou problema no coração. Quem trabalha na rua, mora em casa sem isolamento térmico ou não tem acesso a ar-condicionado sente esse efeito primeiro e mais forte: a ilha de calor não distribui seu custo de forma igual pela cidade.</p>
   </div>
 </section>
 
@@ -321,7 +375,7 @@
     <div class="qlist">
       <details class="qcard">
         <summary>Ainda dá tempo ou já cruzamos o ponto de não retorno?</summary>
-        <p>O maior efeito de vegetação e calor que encontramos está numa área de expansão recente (Cidade Nova). Conter o avanço da cidade sobre a floresta hoje ainda muda o resultado daqui a 20 anos, ou o padrão já está definido demais pra frear?</p>
+        <p>O maior efeito de vegetação e calor que encontramos está numa área de expansão recente (Cidade Nova). Conter o avanço da cidade sobre a floresta hoje ainda muda o resultado daqui a 20 anos, ou o padrão já está definido demais pra frear? Pro resto do planeta, <a href="https://www.pbs.org/newshour/science/global-warming-will-exceed-1-5-degree-limit-un-says-in-report-that-maps-path-back-below-danger-zone" target="_blank" rel="noopener">já sabemos</a> que 1,5°C já é uma realidade, e agora temos que nos planejar pra <strong>reduzir</strong> os impactos.</p>
       </details>
       <details class="qcard">
         <summary>Palmeiras imperiais: urbanismo não é estética, é função</summary>
@@ -589,6 +643,280 @@
 
     prepararLinhas([linhaNdvi, linhaLst]);
     revelarCartao(svg.closest('.chart-card') || svg, [linhaNdvi, linhaLst]);
+  })();
+
+  // ================= chart-heatmap (mapa interativo: zoom + pan) =================
+  (function(){
+    const wrap = document.getElementById('heatmap-wrap');
+    const canvas = document.getElementById('chart-heatmap');
+    if(!wrap || !canvas) return;
+    const ctx = canvas.getContext('2d');
+    const labelsLayer = document.getElementById('heatmap-labels');
+    const btnIn = document.getElementById('heatmap-zoom-in');
+    const btnOut = document.getElementById('heatmap-zoom-out');
+
+    const NROW = HEAT.nrow, NCOL = HEAT.ncol;
+    // Escala em blocos de 0,5°C (não gradiente contínuo, e não a mesma
+    // escala do hero): verde vívido até 31,5°C, vermelho gradual até
+    // 35°C, e um único bloco bem mais saturado pra tudo >= 35°C, pra
+    // fazer os pontos mais quentes da cidade saltarem aos olhos.
+    const COLD_ANCORA = 24.31, CORTE = 31.5, REALCE = 35, PASSO = 0.5;
+    function corCelula(v){
+      if(v >= REALCE) return 'hsl(2 95% 58%)';
+      if(v < CORTE){
+        const nBlocos = Math.ceil((CORTE - COLD_ANCORA) / PASSO);
+        const i = Math.max(0, Math.floor((v - COLD_ANCORA) / PASSO));
+        const t = Math.min(1, i / (nBlocos - 1));
+        return `hsl(142 ${(55 + t*18).toFixed(0)}% ${(22 + t*20).toFixed(0)}%)`;
+      }
+      const nBlocos = Math.ceil((REALCE - CORTE) / PASSO);
+      const i = Math.floor((v - CORTE) / PASSO);
+      const t = Math.min(1, i / (nBlocos - 1));
+      return `hsl(8 ${(45 + t*35).toFixed(0)}% ${(30 + t*20).toFixed(0)}%)`;
+    }
+
+    // Posição (fração 0-1, esquerda->direita / topo->baixo) dos 63 bairros
+    // oficiais de Manaus (lei 1.401/2010, lista completa) + Reserva Adolpho
+    // Ducke, geocodificados via OpenStreetMap/Nominatim (busca "BAIRRO,
+    // Manaus, Amazonas, Brazil", um a um) e convertidos pra fração da grade
+    // cruzando com data/processed/grade.geojson. Mesma verificação de
+    // orientação da versão anterior (linha 0 = extremo NORTE, coluna 0 =
+    // extremo OESTE) -- batida contra numeros_chave.json com exatidão.
+    //
+    // "p" é prioridade (0 = sempre tenta mostrar primeiro, 3 = só preenche
+    // se sobrar espaço): não é um corte fixo de zoom, é usado pelo sistema
+    // de colisão abaixo, que mede o texto de verdade e só desenha o que
+    // não esbarra em um rótulo mais prioritário já colocado -- por isso o
+    // mapa mostra o máximo de nomes que cabem em qualquer zoom, não um
+    // conjunto fixo por faixa.
+    const PONTOS = [
+      { nome:'Adrianópolis', x:0.4266, y:0.7167, p:1 },
+      { nome:'Aleixo', x:0.4687, y:0.6754, p:2 },
+      { nome:'Alvorada', x:0.3372, y:0.6428, p:2 },
+      { nome:'Armando Mendes', x:0.5730, y:0.6947, p:3 },
+      { nome:'Betânia', x:0.4565, y:0.8064, p:3 },
+      { nome:'Cachoeirinha', x:0.4346, y:0.7841, p:3 },
+      { nome:'Centro', x:0.3986, y:0.8036, p:0 },
+      { nome:'Chapada', x:0.3862, y:0.6827, p:3 },
+      { nome:'Cidade Nova', x:0.4631, y:0.5115, p:1 },
+      { nome:'Cidade de Deus', x:0.5570, y:0.4795, p:3 },
+      { nome:'Colônia Antônio Aleixo', x:0.6577, y:0.7277, p:3 },
+      { nome:'Colônia Japonesa', x:0.4385, y:0.6398, p:3 },
+      { nome:'Colônia Oliveira Machado', x:0.4472, y:0.8539, p:3 },
+      { nome:'Colônia Terra Nova', x:0.4141, y:0.4635, p:3 },
+      { nome:'Compensa', x:0.3271, y:0.7267, p:1 },
+      { nome:'Coroado', x:0.5058, y:0.6836, p:2 },
+      { nome:'Crespo', x:0.4694, y:0.8086, p:3 },
+      { nome:'Da Paz', x:0.3783, y:0.5888, p:3 },
+      { nome:'Distrito Industrial I', x:0.5354, y:0.7752, p:2 },
+      { nome:'Distrito Industrial II', x:0.6642, y:0.5488, p:3 },
+      { nome:'Dom Pedro', x:0.3506, y:0.6768, p:3 },
+      { nome:'Educandos', x:0.4220, y:0.8323, p:2 },
+      { nome:'Flores', x:0.3994, y:0.6341, p:2 },
+      { nome:'Gilberto Mestrinho', x:0.6098, y:0.6293, p:3 },
+      { nome:'Glória', x:0.3693, y:0.7647, p:3 },
+      { nome:'Japiim', x:0.4750, y:0.7495, p:2 },
+      { nome:'Jorge Teixeira', x:0.6288, y:0.5032, p:3 },
+      { nome:'Lago Azul', x:0.4571, y:0.3413, p:3 },
+      { nome:'Lírio do Vale', x:0.2872, y:0.6474, p:3 },
+      { nome:'Mauazinho', x:0.5813, y:0.7715, p:3 },
+      { nome:'Monte das Oliveiras', x:0.4542, y:0.4390, p:3 },
+      { nome:'Morro da Liberdade', x:0.4458, y:0.8205, p:3 },
+      { nome:'Nossa Senhora Aparecida', x:0.2791, y:0.5858, p:3 },
+      { nome:'Nossa Senhora das Graças', x:0.4020, y:0.7239, p:3 },
+      { nome:'Nova Cidade', x:0.4992, y:0.4336, p:3 },
+      { nome:'Nova Esperança', x:0.3145, y:0.6659, p:3 },
+      { nome:'Novo Aleixo', x:0.5253, y:0.5828, p:3 },
+      { nome:'Novo Israel', x:0.4299, y:0.5058, p:3 },
+      { nome:'Parque 10 de Novembro', x:0.3992, y:0.6529, p:3 },
+      { nome:'Petrópolis', x:0.4582, y:0.7458, p:1 },
+      { nome:'Planalto', x:0.3192, y:0.6126, p:3 },
+      { nome:'Ponta Negra', x:0.2324, y:0.5715, p:1 },
+      { nome:'Praça 14 de Janeiro', x:0.4138, y:0.7761, p:3 },
+      { nome:'Presidente Vargas', x:0.3811, y:0.7648, p:3 },
+      { nome:'Puraquequara', x:0.8300, y:0.5775, p:3 },
+      { nome:'Raiz', x:0.4510, y:0.7884, p:3 },
+      { nome:'Redenção', x:0.3497, y:0.5835, p:2 },
+      { nome:'Reserva Adolpho Ducke', x:0.6025, y:0.3116, p:0 },
+      { nome:'Santa Etelvina', x:0.4294, y:0.4063, p:3 },
+      { nome:'Santa Luzia', x:0.4320, y:0.8251, p:3 },
+      { nome:'Santo Agostinho', x:0.2980, y:0.6804, p:3 },
+      { nome:'Santo Antônio', x:0.3485, y:0.7570, p:3 },
+      { nome:'São Francisco', x:0.4389, y:0.7444, p:3 },
+      { nome:'São Geraldo', x:0.3898, y:0.7434, p:3 },
+      { nome:'São Jorge', x:0.3538, y:0.7087, p:3 },
+      { nome:'São José Operário', x:0.5673, y:0.6161, p:3 },
+      { nome:'São Lázaro', x:0.4601, y:0.8273, p:3 },
+      { nome:'São Raimundo', x:0.3540, y:0.7732, p:2 },
+      { nome:'Tancredo Neves', x:0.5826, y:0.5781, p:3 },
+      { nome:'Tarumã', x:0.3324, y:0.4965, p:2 },
+      { nome:'Tarumã-Açu', x:0.2903, y:0.3581, p:3 },
+      { nome:'Vila Buriti', x:0.5098, y:0.8370, p:3 },
+      { nome:'Vila da Prata', x:0.3427, y:0.7358, p:3 },
+      { nome:'Zumbi dos Palmares', x:0.5661, y:0.6403, p:3 },
+    ];
+
+    // Canvas fora da tela, pré-renderizado uma vez na resolução máxima --
+    // zoom/pan só recortam e escalam essa imagem (rápido, sem recalcular
+    // cor a cada frame de interação).
+    const CELL_PX = 16;
+    const off = document.createElement('canvas');
+    off.width = NCOL * CELL_PX;
+    off.height = NROW * CELL_PX;
+    const offCtx = off.getContext('2d');
+    const matriz = HEAT.anos['2025'];
+    for(let r=0; r<NROW; r++){
+      for(let c=0; c<NCOL; c++){
+        offCtx.fillStyle = corCelula(matriz[r*NCOL + c]);
+        offCtx.fillRect(c*CELL_PX, r*CELL_PX, CELL_PX, CELL_PX);
+      }
+    }
+
+    const ZOOM_MIN = 1, ZOOM_MAX = 8;
+    const view = { cx:0.5, cy:0.5, zoom:1 };
+
+    function clampView(){
+      view.zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, view.zoom));
+      const halfW = 0.5/view.zoom, halfH = 0.5/view.zoom;
+      view.cx = Math.max(halfW, Math.min(1-halfW, view.cx));
+      view.cy = Math.max(halfH, Math.min(1-halfH, view.cy));
+    }
+
+    function ajustarTamanho(){
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+    }
+
+    function desenhar(){
+      const halfW = 0.5/view.zoom, halfH = 0.5/view.zoom;
+      const sx = (view.cx-halfW)*off.width, sy = (view.cy-halfH)*off.height;
+      const sw = 2*halfW*off.width, sh = 2*halfH*off.height;
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(off, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+      atualizarLabels(halfW, halfH);
+    }
+
+    function atualizarLabels(halfW, halfH){
+      labelsLayer.innerHTML = '';
+      // Candidatos visíveis no recorte atual, ordenados por prioridade --
+      // os mais importantes tentam entrar primeiro.
+      const candidatos = [];
+      PONTOS.forEach(p => {
+        const dx = (p.x - (view.cx-halfW)) / (2*halfW);
+        const dy = (p.y - (view.cy-halfH)) / (2*halfH);
+        if(dx < 0.03 || dx > 0.97 || dy < 0.06 || dy > 0.97) return;
+        candidatos.push({ p, dx, dy });
+      });
+      candidatos.sort((a, b) => a.p.p - b.p.p);
+
+      // Colisão real: cada rótulo é medido de verdade (getBoundingClientRect)
+      // e só fica visível se não esbarrar em nenhum já aceito -- é isso que
+      // deixa o mapa sempre mostrando o máximo de nomes que cabem, em vez
+      // de um conjunto fixo por faixa de zoom.
+      const ocupados = [];
+      const MARGEM = 4;
+      candidatos.forEach(({ p, dx, dy }) => {
+        const el = document.createElement('span');
+        el.className = 'heatmap-label';
+        el.textContent = p.nome;
+        el.style.left = (dx*100)+'%';
+        el.style.top = (dy*100)+'%';
+        el.style.visibility = 'hidden';
+        labelsLayer.appendChild(el);
+        const r = el.getBoundingClientRect();
+        const caixa = { l:r.left-MARGEM, r:r.right+MARGEM, t:r.top-MARGEM, b:r.bottom+MARGEM };
+        const colide = ocupados.some(o => !(caixa.r < o.l || caixa.l > o.r || caixa.b < o.t || caixa.t > o.b));
+        if(colide){
+          labelsLayer.removeChild(el);
+        } else {
+          el.style.visibility = 'visible';
+          ocupados.push(caixa);
+        }
+      });
+    }
+
+    function zoomPara(novoZoom, mouseXFrac, mouseYFrac){
+      const halfW = 0.5/view.zoom, halfH = 0.5/view.zoom;
+      const dataX = (view.cx-halfW) + mouseXFrac*2*halfW;
+      const dataY = (view.cy-halfH) + mouseYFrac*2*halfH;
+      view.zoom = novoZoom;
+      const halfW2 = 0.5/view.zoom, halfH2 = 0.5/view.zoom;
+      view.cx = dataX - (mouseXFrac-0.5)*2*halfW2;
+      view.cy = dataY - (mouseYFrac-0.5)*2*halfH2;
+      clampView();
+      desenhar();
+    }
+
+    btnIn.addEventListener('click', () => zoomPara(view.zoom*1.6, 0.5, 0.5));
+    btnOut.addEventListener('click', () => zoomPara(view.zoom/1.6, 0.5, 0.5));
+
+    wrap.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const mx = (e.clientX-rect.left)/rect.width;
+      const my = (e.clientY-rect.top)/rect.height;
+      const fator = e.deltaY < 0 ? 1.15 : 1/1.15;
+      zoomPara(view.zoom*fator, mx, my);
+    }, { passive:false });
+
+    let arrastando = false, ultimoX = 0, ultimoY = 0;
+    function iniciarArrasto(x, y){ arrastando = true; ultimoX = x; ultimoY = y; wrap.style.cursor = 'grabbing'; }
+    function moverArrasto(x, y){
+      if(!arrastando) return;
+      const rect = canvas.getBoundingClientRect();
+      const halfW = 0.5/view.zoom, halfH = 0.5/view.zoom;
+      view.cx -= (x-ultimoX)/rect.width * 2*halfW;
+      view.cy -= (y-ultimoY)/rect.height * 2*halfH;
+      ultimoX = x; ultimoY = y;
+      clampView();
+      desenhar();
+    }
+    function pararArrasto(){ arrastando = false; wrap.style.cursor = 'grab'; }
+
+    wrap.addEventListener('mousedown', (e) => iniciarArrasto(e.clientX, e.clientY));
+    window.addEventListener('mousemove', (e) => moverArrasto(e.clientX, e.clientY));
+    window.addEventListener('mouseup', pararArrasto);
+    wrap.addEventListener('touchstart', (e) => { const t=e.touches[0]; iniciarArrasto(t.clientX, t.clientY); e.preventDefault(); }, { passive:false });
+    wrap.addEventListener('touchmove', (e) => { const t=e.touches[0]; moverArrasto(t.clientX, t.clientY); e.preventDefault(); }, { passive:false });
+    wrap.addEventListener('touchend', pararArrasto);
+
+    wrap.addEventListener('keydown', (e) => {
+      const passo = 0.08/view.zoom;
+      if(e.key === '+' || e.key === '='){ zoomPara(view.zoom*1.4, 0.5, 0.5); e.preventDefault(); }
+      else if(e.key === '-' || e.key === '_'){ zoomPara(view.zoom/1.4, 0.5, 0.5); e.preventDefault(); }
+      else if(e.key === 'ArrowLeft'){ view.cx -= passo; clampView(); desenhar(); e.preventDefault(); }
+      else if(e.key === 'ArrowRight'){ view.cx += passo; clampView(); desenhar(); e.preventDefault(); }
+      else if(e.key === 'ArrowUp'){ view.cy -= passo; clampView(); desenhar(); e.preventDefault(); }
+      else if(e.key === 'ArrowDown'){ view.cy += passo; clampView(); desenhar(); e.preventDefault(); }
+    });
+
+    // Barra da legenda desenhada com a mesma corCelula, pra mostrar os
+    // blocos de verdade em vez de um gradiente suave que não existe no mapa.
+    const legendCanvas = document.getElementById('heatmap-legend-bar');
+    function desenharLegenda(){
+      if(!legendCanvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = legendCanvas.getBoundingClientRect();
+      legendCanvas.width = Math.round(rect.width * dpr);
+      legendCanvas.height = Math.round(rect.height * dpr);
+      const lctx = legendCanvas.getContext('2d');
+      for(let i=0; i<legendCanvas.width; i++){
+        const v = COLD_ANCORA + (i/legendCanvas.width) * (39.01 - COLD_ANCORA);
+        lctx.fillStyle = corCelula(v);
+        lctx.fillRect(i, 0, 2, legendCanvas.height);
+      }
+    }
+
+    aoEntrarNaTela(wrap.closest('.chart-card'), () => {
+      wrap.closest('.chart-card').classList.add('revelado');
+      ajustarTamanho();
+      desenhar();
+      desenharLegenda();
+    });
+    window.addEventListener('resize', () => { ajustarTamanho(); desenhar(); desenharLegenda(); });
   })();
 
   // ================= chart-scatter =================
