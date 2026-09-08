@@ -135,6 +135,8 @@
     display:flex; align-items:center; justify-content:center;
   }
   .therm-pt{ position:absolute; top:-3rem; transform:translateX(-50%); text-align:center; font-size:.78rem; color:var(--ink-soft); white-space:nowrap; }
+  .therm-pt-l{ transform:translateX(0); text-align:left; }
+  .therm-pt-r{ transform:translateX(-100%); text-align:right; }
   .therm-pt b{ display:block; font-family:"Fraunces",serif; font-size:1.15rem; color:var(--ink); }
   .therm-dot{ position:absolute; top:50%; width:12px; height:12px; margin-top:-6px; margin-left:-6px; border-radius:50%; background:var(--paper); border:2px solid var(--ink); }
   .therm-diff .num{
@@ -229,8 +231,8 @@
       <div class="therm-track">
         <span class="therm-dot" style="left:8%"></span>
         <span class="therm-dot" style="left:92%"></span>
-        <span class="therm-pt" style="left:8%">27,9°C<b>Adolpho Ducke</b></span>
-        <span class="therm-pt" style="left:92%">36,7°C<b>Petrópolis</b></span>
+        <span class="therm-pt therm-pt-l" style="left:8%">27,9°C<b>Adolpho Ducke</b></span>
+        <span class="therm-pt therm-pt-r" style="left:92%">36,7°C<b>Petrópolis</b></span>
         <div class="therm-diff"><span class="num">+8,8°C</span></div>
       </div>
     </div>
