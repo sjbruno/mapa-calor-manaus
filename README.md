@@ -3,7 +3,8 @@
 25 anos de dados de satélite (2001–2025) cruzando temperatura de superfície
 e perda de vegetação urbana em Manaus, célula a célula, numa grade de 1 km.
 
-**Site:** [manausodeiaarvores.com.br](https://manausodeiaarvores.com.br)
+**Site:** [manausodeiaarvores.com.br](https://manausodeiaarvores.com.br)  
+**Autor:** [brunotemum.site](https://brunotemum.site)
 
 ## O que tem aqui
 
