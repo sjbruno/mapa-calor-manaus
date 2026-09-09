@@ -29,7 +29,7 @@
     --ink:#2b2620; --ink-soft:#5c5347; --ink-mute:#847a6c;
     --paper:#fbf8f1; --paper-line:#e7e0d1;
     --chart-green:#0E8A73; --chart-red:#C1543A;
-    --h0:130; --h1:108; --h2:86; --h3:64; --h4:42; --h5:20; --h6:0;
+    --h0:130; --h1:114; --h2:98; --h3:81; --h4:65; --h5:49; --h6:33; --h7:16; --h8:0;
     --wash-s:38%; --wash-l:91%;
     --accent-s:46%; --accent-l:32%;
     --a-0: hsl(var(--h0) var(--accent-s) var(--accent-l));
@@ -38,6 +38,8 @@
     --a-3: hsl(var(--h3) var(--accent-s) var(--accent-l));
     --a-4: hsl(var(--h4) var(--accent-s) var(--accent-l));
     --a-5: hsl(var(--h5) var(--accent-s) var(--accent-l));
+    --a-6: hsl(var(--h6) var(--accent-s) var(--accent-l));
+    --a-7: hsl(var(--h7) var(--accent-s) var(--accent-l));
     --shadow: 0 1px 2px rgba(43,38,32,.06), 0 6px 20px -8px rgba(43,38,32,.18);
   }
   @media (prefers-color-scheme: dark){
@@ -124,8 +126,12 @@
   .sec-3{ background: linear-gradient(180deg, hsl(var(--h3) var(--wash-s) var(--wash-l)), hsl(var(--h4) var(--wash-s) var(--wash-l))); }
   .sec-4{ background: linear-gradient(180deg, hsl(var(--h4) var(--wash-s) var(--wash-l)), hsl(var(--h5) var(--wash-s) var(--wash-l))); }
   .sec-5{ background: linear-gradient(180deg, hsl(var(--h5) var(--wash-s) var(--wash-l)), hsl(var(--h6) var(--wash-s) var(--wash-l))); }
+  .sec-6{ background: linear-gradient(180deg, hsl(var(--h6) var(--wash-s) var(--wash-l)), hsl(var(--h7) var(--wash-s) var(--wash-l))); }
+  .sec-7{ background: linear-gradient(180deg, hsl(var(--h7) var(--wash-s) var(--wash-l)), hsl(var(--h8) var(--wash-s) var(--wash-l))); }
   .sec-0 h2{ color:var(--a-0) } .sec-1 h2{ color:var(--a-1) } .sec-2 h2{ color:var(--a-2) }
   .sec-3 h2{ color:var(--a-3) } .sec-4 h2{ color:var(--a-4) } .sec-5 h2{ color:var(--a-5) }
+  .sec-6 h2{ color:var(--a-6) } .sec-7 h2{ color:var(--a-7) }
+  .sec-5 .effect-icon{ color:var(--a-5) }
 
   /* ================= THERMOMETER BAR ================= */
   .therm{ margin:4.6rem auto 0; max-width:420px; }
@@ -156,6 +162,50 @@
 
   .note{ margin:1.4rem auto 0; max-width:58ch; font-size:.9rem; color:var(--ink-soft); font-style:italic; }
   .note strong{ color:var(--ink); font-style:normal; }
+
+  /* ================= BLOCO DE EFEITOS (iconizado) ================= */
+  .effects-grid{
+    display:grid; grid-template-columns:1fr; gap:2rem 2.6rem;
+    margin:2.2rem auto 0; max-width:640px; text-align:left;
+  }
+  @media (min-width:640px){ .effects-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:639px){
+    .effect{ align-items:center; text-align:center; }
+    .effect-icons{ justify-content:center; }
+  }
+  .effect{ display:flex; flex-direction:column; gap:.55rem; }
+  .effect-icons{ display:flex; gap:.5rem; }
+  .effect-icon{
+    width:2.6rem; height:2.6rem; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .effect-icon svg{ width:100%; height:100%; }
+  .effect h3{ font-family:"Fraunces",serif; font-weight:600; font-size:1.08rem; margin:0; color:var(--ink); }
+  .effect p{ margin:0; font-size:.88rem; color:var(--ink-soft); line-height:1.5; }
+
+  /* ================= CARROSSEL DE FOTOS ================= */
+  .carousel{ position:relative; margin:2.2rem auto 0; max-width:620px; }
+  .carousel-track{
+    display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:1.2rem;
+    scrollbar-width:none; -ms-overflow-style:none; margin:0; padding:0; list-style:none;
+  }
+  .carousel-track::-webkit-scrollbar{ display:none; }
+  .carousel-slide{ flex:0 0 100%; scroll-snap-align:center; margin:0; }
+  .carousel-slide img{ width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:14px; display:block; }
+  .carousel-slide figcaption{ display:flex; flex-direction:column; gap:.15rem; margin-top:.7rem; text-align:left; }
+  .carousel-local{ font-weight:600; color:var(--ink); font-size:.92rem; }
+  .carousel-credito{ font-size:.72rem; color:var(--ink-mute); }
+  .carousel-btn{
+    position:absolute; top:38%; transform:translateY(-50%); width:2.5rem; height:2.5rem;
+    border-radius:50%; border:none; background:var(--paper); color:var(--ink);
+    box-shadow:var(--shadow); font-size:1.3rem; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .carousel-prev{ left:-1.25rem; } .carousel-next{ right:-1.25rem; }
+  @media (max-width:680px){ .carousel-prev{ left:.4rem; } .carousel-next{ right:.4rem; } }
+  .carousel-dots{ display:flex; justify-content:center; gap:.45rem; margin-top:.9rem; }
+  .carousel-dot{ width:.5rem; height:.5rem; border-radius:50%; border:none; padding:0; background:var(--paper-line); cursor:pointer; }
+  .carousel-dot.ativo{ background:var(--a-6); }
 
   .chart-card{
     margin:1.8rem auto; max-width:620px;
@@ -262,7 +312,7 @@
   .qcard[open] summary::after{ transform:rotate(45deg); }
   .qcard p{ margin:.9rem 0 0; padding:0 2.2rem; color:var(--ink-soft); font-size:.94rem; }
 
-  footer{ background:hsl(var(--h6) var(--wash-s) var(--wash-l)); padding:2.4rem 0 3rem; }
+  footer{ background:hsl(var(--h8) var(--wash-s) var(--wash-l)); padding:2.4rem 0 3rem; }
   footer .cols{ display:flex; flex-direction:column; gap:2.2rem; font-size:.9rem; line-height:1.6; color:var(--ink-soft); text-align:center; }
   footer .cols > div{ max-width:58ch; margin:0 auto; }
   footer h4{ font-size:.74rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-mute); margin:0 0 .6rem; font-family:"Work Sans",sans-serif; }
@@ -413,7 +463,85 @@
   </div>
 </section>
 
-<section class="block sec-5">
+<section class="block sec-5" id="efeitos">
+  <div class="wrap">
+    <h2>Quem sente o calor subir</h2>
+    <p class="dek">O calor que sobe em Manaus não fica só no termômetro. Ele passa pelo corpo, pela conta de luz, pela água que falta e pela lavoura que a própria floresta ainda sustenta.</p>
+
+    <div class="effects-grid">
+      <div class="effect">
+        <div class="effect-icons">
+          <span class="effect-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/><path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg></span>
+        </div>
+        <h3>Saúde</h3>
+        <p>Noite quente atrapalha o sono e sobrecarrega o coração: risco cardiovascular sobe com o calor extremo.<button type="button" class="cite" data-cite="calor-saude" aria-label="Ver fonte deste dado"></button></p>
+      </div>
+
+      <div class="effect">
+        <div class="effect-icons">
+          <span class="effect-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></svg></span>
+          <span class="effect-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg></span>
+        </div>
+        <h3>Recursos</h3>
+        <p>Manaus já bateu recorde de consumo de energia em dia de calor, e sem luz o tratamento de água também para.<button type="button" class="cite" data-cite="calor-recursos" aria-label="Ver fonte deste dado"></button></p>
+      </div>
+
+      <div class="effect">
+        <div class="effect-icons">
+          <span class="effect-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 17.5a2.5 2.5 0 1 1-4 2.03V12"/><path d="M6 12H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 8h12"/><path d="M6.6 15.572A2 2 0 1 0 10 17v-5"/></svg></span>
+          <span class="effect-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+        </div>
+        <h3>Finanças</h3>
+        <p>Manaus já paga a energia mais cara do Brasil (R$1,07 o kWh), e o calor extremo empurra a conta ainda mais.<button type="button" class="cite" data-cite="calor-financas" aria-label="Ver fonte deste dado"></button></p>
+      </div>
+
+      <div class="effect">
+        <div class="effect-icons">
+          <span class="effect-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></svg></span>
+        </div>
+        <h3>Ambiente</h3>
+        <p>Menos floresta, menos chuva: desmatamento já reduziu safra e renda agrícola na própria Amazônia.<button type="button" class="cite" data-cite="calor-ambiente" aria-label="Ver fonte deste dado"></button></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block sec-6">
+  <div class="wrap">
+    <h2>Parques Sem Sombras</h2>
+    <p class="dek">Além de possuir poucos parques pela cidade, Manaus tem o péssimo hábito de construir parques com nenhuma árvore. Ou com árvores que não tem projeção de sombra que faça sentido para uma cidade que continua fervendo.</p>
+
+    <div class="carousel" id="carousel-parques">
+      <div class="carousel-track" id="carousel-track">
+        <figure class="carousel-slide">
+          <img src="fotos/parque-jefferson-peres.jpg" alt="Parque Jefferson Peres, com pouquíssimas árvores e mudas ainda pequenas" loading="lazy">
+          <figcaption><span class="carousel-local">Parque Jefferson Peres</span><span class="carousel-credito">Foto: Wagner Fontoura/Wikimedia Commons (CC BY 2.0)</span></figcaption>
+        </figure>
+        <figure class="carousel-slide">
+          <img src="fotos/parque-gigantes-da-floresta.jpg" alt="Parque Gigantes da Floresta visto de cima, cheio de estruturas coloridas e quase sem copa de árvore" loading="lazy">
+          <figcaption><span class="carousel-local">Parque Gigantes da Floresta</span><span class="carousel-credito">Foto: Instagram @gigantesdaflorestaofc</span></figcaption>
+        </figure>
+        <figure class="carousel-slide">
+          <img src="fotos/av-constantino-nery-1.jpg" alt="Av. Constantino Nery, com árvores jovens e pequenas ao longo da via" loading="lazy">
+          <figcaption><span class="carousel-local">Av. Constantino Nery</span><span class="carousel-credito">Foto: Patrick Marques/g1 AM</span></figcaption>
+        </figure>
+        <figure class="carousel-slide">
+          <img src="fotos/av-constantino-nery-2.jpg" alt="Canteiro central da Av. Constantino Nery sem nenhuma árvore" loading="lazy">
+          <figcaption><span class="carousel-local">Av. Constantino Nery</span><span class="carousel-credito">Foto: Diego Oliveira/Portal Amazônia</span></figcaption>
+        </figure>
+        <figure class="carousel-slide">
+          <img src="fotos/manaus-parque.jpg" alt="Vista aérea de bairros densos de Manaus, sem cobertura de árvores" loading="lazy">
+          <figcaption><span class="carousel-local">Manaus</span><span class="carousel-credito">Foto: Adneison Severiano/g1 AM</span></figcaption>
+        </figure>
+      </div>
+      <button type="button" class="carousel-btn carousel-prev" aria-label="Foto anterior">‹</button>
+      <button type="button" class="carousel-btn carousel-next" aria-label="Próxima foto">›</button>
+      <div class="carousel-dots" id="carousel-dots"></div>
+    </div>
+  </div>
+</section>
+
+<section class="block sec-7">
   <div class="wrap">
     <h2>Perguntas em aberto</h2>
 
@@ -531,6 +659,26 @@
         tipo: 'Estudo', titulo: 'Densificação x cobertura de copa em Perth',
         corpo: 'Modelagem de sistemas (Collaborative Conceptual Modelling) encontrou que, nas políticas atuais, a pressão por densidade habitacional está vencendo a meta de arborização — mais densidade, menos copa, mais calor.',
         link: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6068507/', linkTexto: 'Ler o estudo',
+      },
+      'calor-saude': {
+        tipo: 'Estudo', titulo: 'Ilha de calor e internações cardiovasculares',
+        corpo: 'Estudo da EPA com idosos em áreas metropolitanas dos EUA (2000–2017): risco de internação por doença cardiovascular durante calor extremo foi de 2,4% em áreas de ilha de calor intensa, contra 1,0% em áreas mais frias da mesma cidade.',
+        link: 'https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=358808&Lab=CPHEA', linkTexto: 'Ler o estudo (EPA)',
+      },
+      'calor-recursos': {
+        tipo: 'Dado', titulo: 'Recorde de energia e apagão em Manaus',
+        corpo: 'A Região Metropolitana de Manaus bateu recorde de consumo de energia (1.731,91 MW) em 20/08/2024, dia de 36°C com sensação térmica de 45°C. Separadamente, um apagão em março/2025 (falha numa linha de transmissão do Sistema Interligado Nacional) deixou estações de tratamento de água paradas, mostrando como o abastecimento depende do fornecimento elétrico.',
+        link: 'https://www.acritica.com/geral/em-meio-a-onda-de-calor-regi-o-metropolitana-de-manaus-bate-recorde-de-consumo-de-energia-eletrica-1.349168', linkTexto: 'Ler na A Crítica',
+      },
+      'calor-financas': {
+        tipo: 'Dado', titulo: 'A energia mais cara do Brasil',
+        corpo: 'kWh a R$1,07 no Amazonas contra média nacional de R$0,87 (dados ANEEL) — a hidrelétrica de Balbina (250 MW) não supre a demanda de Manaus, que precisa comprar energia mais cara de fora. Segundo a Eletrobras/Procel, o ar-condicionado pode chegar a 40% do consumo residencial de energia no verão.',
+        link: 'https://cieam.com.br/noticias/amazonas-tem-a-tarifa-de-energia-mais-cara-do-pais', linkTexto: 'Ler no CIEAM',
+      },
+      'calor-ambiente': {
+        tipo: 'Estudo', titulo: 'Desmatamento, chuva e renda agrícola na Amazônia',
+        corpo: 'Análise de 1982–2018 encontrou queda de 6% a 30% na chuva sazonal em sete estados produtores de soja associada ao desmatamento na Amazônia — com impacto direto na safra e na renda agrícola na própria região.',
+        link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8110785/', linkTexto: 'Ler o estudo (PNAS)',
       },
     };
 
@@ -1196,6 +1344,51 @@
         pontos.forEach(c => { c.style.opacity = '.4'; });
       });
     });
+  })();
+
+  // ================= carrossel de fotos (Parques Sem Sombras) =================
+  (function(){
+    const carrossel = document.getElementById('carousel-parques');
+    if(!carrossel) return;
+    const track = document.getElementById('carousel-track');
+    const dotsWrap = document.getElementById('carousel-dots');
+    const prevBtn = carrossel.querySelector('.carousel-prev');
+    const nextBtn = carrossel.querySelector('.carousel-next');
+    const slides = [...track.children];
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'carousel-dot';
+      dot.setAttribute('aria-label', 'Ir pra foto ' + (i + 1) + ' de ' + slides.length);
+      dot.addEventListener('click', () => {
+        slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      });
+      dotsWrap.appendChild(dot);
+    });
+    const dots = [...dotsWrap.children];
+
+    function atualizarAtivo(){
+      const centro = track.scrollLeft + track.clientWidth / 2;
+      let idx = 0, menor = Infinity;
+      slides.forEach((s, i) => {
+        const d = Math.abs((s.offsetLeft + s.offsetWidth / 2) - centro);
+        if(d < menor){ menor = d; idx = i; }
+      });
+      dots.forEach((d, i) => d.classList.toggle('ativo', i === idx));
+    }
+
+    let pendente = false;
+    track.addEventListener('scroll', () => {
+      if(pendente) return;
+      pendente = true;
+      requestAnimationFrame(() => { atualizarAtivo(); pendente = false; });
+    }, { passive: true });
+
+    prevBtn.addEventListener('click', () => track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' }));
+    nextBtn.addEventListener('click', () => track.scrollBy({ left: track.clientWidth, behavior: 'smooth' }));
+
+    atualizarAtivo();
   })();
 })();
 </script>
