@@ -172,8 +172,11 @@
   .chart-card .gridline{ stroke:var(--paper-line); stroke-width:1; }
   .legend{ display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center; margin-top:.6rem; font-size:.8rem; color:var(--ink-soft); }
   .legend span{ display:inline-flex; align-items:center; gap:.4em; }
-  .heatmap-legend{ display:flex; align-items:center; gap:.7rem; margin-top:1rem; font-size:.78rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .heatmap-legend{ display:flex; align-items:center; gap:.7rem; margin-top:1.7rem; font-size:.78rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .heatmap-legend-bar-wrap{ position:relative; flex:1; }
   .chart-card .heatmap-legend-bar{ flex:1; height:10px !important; border-radius:5px; display:block; width:100%; }
+  .heatmap-legend-mark{ position:absolute; top:-1.3rem; transform:translateX(-50%); font-size:.68rem; line-height:1; white-space:nowrap; color:var(--ink-mute); }
+  .heatmap-legend-mark::after{ content:''; position:absolute; left:50%; top:1.05rem; width:1px; height:14px; background:var(--ink-mute); opacity:.6; transform:translateX(-50%); }
 
   .heatmap-wrap{
     position:relative; width:100%; aspect-ratio:51/40; border-radius:6px;
@@ -379,7 +382,10 @@
       </div>
       <div class="heatmap-legend">
         <span>24,3°C</span>
-        <canvas class="heatmap-legend-bar" id="heatmap-legend-bar" aria-hidden="true"></canvas>
+        <div class="heatmap-legend-bar-wrap">
+          <canvas class="heatmap-legend-bar" id="heatmap-legend-bar" aria-hidden="true"></canvas>
+          <span class="heatmap-legend-mark" id="heatmap-legend-mark" aria-hidden="true"></span>
+        </div>
         <span>39,0°C</span>
       </div>
     </div>
@@ -636,14 +642,30 @@
       return INTERCEPT_MAX + SLOPE_MAX * anoFloat;
     }
 
-    let cw = 0, ch = 0, dpr = 1;
+    let cw = 0, ch = 0, dpr = 1, offX = 0, offY = 0;
+    // A grade e 51x40 (formato paisagem, 1.28:1). Em telas retrato
+    // (mobile), preencher largura E altura sem cortar nada estica cada
+    // celula em ~2.6x mais alta que larga -- a mancha de calor fica
+    // achatada/deformada. Limita a distorcao da celula (RATIO_MAX) e
+    // deixa sobrar so um corte nas bordas leste/oeste, centralizado, em
+    // vez de esticar tudo pra caber.
+    const RATIO_MAX = 1.6;
     function ajustarTamanho(){
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = canvas.getBoundingClientRect();
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
-      cw = canvas.width / NCOL;
-      ch = canvas.height / NROW;
+      const fullCw = canvas.width / NCOL;
+      const fullCh = canvas.height / NROW;
+      if(fullCh / fullCw > RATIO_MAX){
+        ch = fullCh; cw = ch / RATIO_MAX;
+      } else if(fullCw / fullCh > RATIO_MAX){
+        cw = fullCw; ch = cw / RATIO_MAX;
+      } else {
+        cw = fullCw; ch = fullCh;
+      }
+      offX = (canvas.width - cw*NCOL) / 2;
+      offY = (canvas.height - ch*NROW) / 2;
     }
 
     function desenhar(matriz){
@@ -652,7 +674,7 @@
         for(let c=0; c<NCOL; c++){
           const v = matriz[r*NCOL + c];
           ctx.fillStyle = corCelula(v);
-          ctx.fillRect(Math.floor(c*cw), Math.floor(r*ch), Math.ceil(cw)+1, Math.ceil(ch)+1);
+          ctx.fillRect(Math.floor(offX + c*cw), Math.floor(offY + r*ch), Math.ceil(cw)+1, Math.ceil(ch)+1);
         }
       }
     }
@@ -1091,6 +1113,8 @@
     // Barra da legenda desenhada com a mesma corCelula, pra mostrar os
     // blocos de verdade em vez de um gradiente suave que não existe no mapa.
     const legendCanvas = document.getElementById('heatmap-legend-bar');
+    const legendMark = document.getElementById('heatmap-legend-mark');
+    const LEGEND_MAX = 39.01;
     function desenharLegenda(){
       if(!legendCanvas) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1099,9 +1123,14 @@
       legendCanvas.height = Math.round(rect.height * dpr);
       const lctx = legendCanvas.getContext('2d');
       for(let i=0; i<legendCanvas.width; i++){
-        const v = COLD_ANCORA + (i/legendCanvas.width) * (39.01 - COLD_ANCORA);
+        const v = COLD_ANCORA + (i/legendCanvas.width) * (LEGEND_MAX - COLD_ANCORA);
         lctx.fillStyle = corCelula(v);
         lctx.fillRect(i, 0, 2, legendCanvas.height);
+      }
+      if(legendMark){
+        const frac = (CORTE - COLD_ANCORA) / (LEGEND_MAX - COLD_ANCORA);
+        legendMark.style.left = (frac*100).toFixed(1) + '%';
+        legendMark.textContent = CORTE.toFixed(1).replace('.', ',') + '°C';
       }
     }
 
