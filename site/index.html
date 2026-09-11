@@ -769,13 +769,25 @@
     const hotHalf = 39.01 - media;
     const ANO_INI = 2001, ANO_FIM = 2025;
 
-    function corCelula(v){
+    // Extremos calibrados pra bater exatamente com as cores do mapa de
+    // ilhas de calor: verde do ponto mais frio (hsl(142 55% 22%)) e
+    // vermelho do bloco 35C+ (hsl(2 95% 58%), REALCE). Meio do intervalo
+    // continua mudo/escuro -- so os extremos ficam vividos.
+    // PASSO quantiza a celula em degraus (evita gradiente 100% continuo).
+    // POTENCIA < 1 encurta o caminho ate o vivido: com abs^POTENCIA, valores
+    // medios ja saltam perto do teto de saturacao, em vez de so os extremos.
+    const PASSO = 0.5;
+    const POTENCIA = 0.55;
+    function corCelula(vRaw){
+      const v = Math.round(vRaw / PASSO) * PASSO;
       const t = v <= media ? -(media - v) / coldHalf : (v - media) / hotHalf;
       const tc = Math.max(-1, Math.min(1, t));
-      const abs = Math.abs(tc);
-      const hue = tc < 0 ? 165 : 12;
-      const light = 15 + abs * (63 - 15);
-      const sat = 12 + abs * (62 - 12);
+      const abs = Math.pow(Math.abs(tc), POTENCIA);
+      const hue = tc < 0 ? 142 : 2;
+      const lightAlvo = tc < 0 ? 22 : 58;
+      const satAlvo = tc < 0 ? 55 : 95;
+      const light = 15 + abs * (lightAlvo - 15);
+      const sat = 12 + abs * (satAlvo - 12);
       return `hsl(${hue} ${sat.toFixed(0)}% ${light.toFixed(0)}%)`;
     }
 
