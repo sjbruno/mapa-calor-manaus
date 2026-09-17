@@ -22,6 +22,9 @@ credentials.json
 # Lixo do macOS
 .DS_Store
 
+# Dependências do backend de tracking (site/api) — reproduzíveis via package-lock.json
+site/node_modules/
+
 # Documentos de planejamento/processo pessoais — não fazem parte do projeto
 # público (metodologia e código ficam no README.md e no Claude-INSTRUCTIONS.md).
 ESTUDO.md
